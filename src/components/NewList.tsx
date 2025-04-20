@@ -3,9 +3,9 @@ import axios from "axios";
 import NewsCard from "./NewsCard";
 
 type NewsItem = {
-  image: string;
-  title: string;
-  summary: string;
+  newsImage: string;
+  newsTitle: string;
+  newsSummary: string;
 };
 
 export default function NewsList() {
@@ -37,9 +37,9 @@ export default function NewsList() {
       {newsData.map((news, idx) => (
         <NewsCard
           key={idx}
-          image={news.image}
-          title={news.title}
-          summary={news.summary}
+          newsImage={news.newsImage}
+          newsTitle={news.newsTitle}
+          newsSummary={news.newsSummary}
         />
       ))}
     </div>

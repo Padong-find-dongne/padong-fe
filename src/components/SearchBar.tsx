@@ -1,17 +1,26 @@
 import { useSearchStore } from "../store/SearchStore";
 import { GrSearch } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
-export default function SearchInput() {
+const SearchBar = () => {
   const {
     inputType,
     setInputType,
-    searchValue,
-    setSearchValue,
-    multiSearchValues,
-    setMultiSearchValue,
+    singleDestination,
+    setSingleDestination,
+    multiDestinations,
+    setMultiDestination,
   } = useSearchStore();
   const navigate = useNavigate();
-
+  // inputType에 따라 다르게 렌더링되는 input의 value를 설정하는 함수
+  const handleInputChange = (index: number, value: string) => {
+    const newDong = { dongName: value, dongCode: "" };
+    setMultiDestination(index, newDong);
+  };
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      navigate("/search");
+    }
+  }; // Added missing closing brace here
   return (
     <div className="flex flex-col items-center space-y-4">
       {/* 선택 요소 */}
@@ -44,8 +53,11 @@ export default function SearchInput() {
         <div className="relative items-center w-screen max-w-md">
           <input
             type="text"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            value={singleDestination?.dongName || ""}
+            onChange={(e) =>
+              setSingleDestination({ dongName: e.target.value, dongCode: "" })
+            }
+            onKeyDown={handleKeyPress}
             placeholder={"목적지(출근지,회사 등)의 지역명을 검색해보세요"}
             className=" w-full pr-10 pl-4 py-2 text-sm border border-[#2e58e4] rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -64,8 +76,9 @@ export default function SearchInput() {
             <div key={idx} className="border-b border-gray-300 relative">
               <input
                 type="text"
-                value={multiSearchValues[idx]}
-                onChange={(e) => setMultiSearchValue(idx, e.target.value)}
+                value={multiDestinations[idx]?.dongName || ""}
+                onChange={(e) => handleInputChange(idx, e.target.value)}
+                onKeyDown={handleKeyPress}
                 placeholder={"목적지(출근지,회사 등)의 지역명을 검색해보세요"}
                 className="border-none w-full pr-10 pl-4 py-2 indent-14 text-sm border border-[#2e58e4] rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "
               />
@@ -87,4 +100,5 @@ export default function SearchInput() {
       )}
     </div>
   );
-}
+};
+export default SearchBar;

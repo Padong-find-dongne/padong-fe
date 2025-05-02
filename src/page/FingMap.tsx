@@ -1,5 +1,7 @@
 import React from "react";
 import { useSearchStore } from "../store/SearchStore";
+import SeoulMap from "../components/SeoulMap";
+
 const FingMap = () => {
   const { singleDestination, multiDestinations, inputType } = useSearchStore();
   return (
@@ -33,6 +35,7 @@ const FingMap = () => {
           </div>
         )}
       </aside>
+      <SeoulMap />
     </div>
   );
 };

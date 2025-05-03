@@ -4,16 +4,16 @@ import "leaflet/dist/leaflet.css";
 const SeoulMap = () => {
   return (
     <MapContainer
-      center={[51.505, -0.09]}
-      zoom={13}
+      center={[37.5665, 126.978]}
+      zoom={14}
       scrollWheelZoom={false}
-      style={{ height: "300px", width: "70%" }}
+      style={{ height: "600px", width: "50%" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={[51.505, -0.09]}>
+      <Marker position={[37.5665, 126.978]}>
         <Popup>
           A pretty CSS3 popup. <br /> Easily customizable.
         </Popup>

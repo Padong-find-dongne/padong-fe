@@ -2,11 +2,11 @@ import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
 import NewsCard from "../components/NewsCard";
 import { useNavigate } from "react-router-dom";
+import { useNewsStore } from "../store/newsStore";
 import "../styles/Main.css";
 import { BiSolidQuoteLeft } from "react-icons/bi";
 const Main = () => {
   const navigate = useNavigate();
-
   const handleGuideClick = () => {
     navigate("/guide");
   };
@@ -35,11 +35,17 @@ const Main = () => {
         </div>
       </div>
       <div className="news-list px-30 mt-20">
-        <span className="text-3xl text-bold border-b">News</span>
-        <p className="text-[#818181] mt-3">주택 정보 및 뉴스를 확인하세요.</p>
-        <div className="pt-3">
-          <NewsCard />
+        <div className="flex justify-between">
+          <div className="inline-flex flex-col">
+            <span className="text-3xl text-bold border-b">News</span>
+            <span className="text-[#818181] mt-3">
+              주택 정보 및 뉴스를 확인하세요.
+            </span>
+          </div>
+          <span className="text-[#6D6D6D]">더보기</span>
         </div>
+        <NewsCard search="주택가격" />
+        <NewsCard search="청년주택" />
       </div>
     </div>
   );

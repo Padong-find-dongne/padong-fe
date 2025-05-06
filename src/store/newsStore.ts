@@ -1,42 +1,44 @@
+// src/store/newsStore.ts
 import { create } from "zustand";
 import axios from "axios";
 
-interface News {
+export interface NewsItem {
   newsTitle: string;
   newsSummary: string;
+  originallink: string;
   newsImage: string;
 }
 
 interface NewsStore {
-  newsList: News[];
-  fetchNews: (search: string) => Promise<void>;
+  youthHousingNews: NewsItem[];
+  housingPriceNews: NewsItem[];
+  fetchAllNews: () => Promise<void>;
 }
 
 export const useNewsStore = create<NewsStore>((set) => ({
-  newsList: [],
-  fetchNews: async (search: string) => {
+  youthHousingNews: [],
+  housingPriceNews: [],
+  fetchAllNews: async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/news/${encodeURIComponent(search)}`
-      );
-      console.log("전체 응답:", response);
-      console.log("response.data:", response.data);
+      const [youthRes, priceRes] = await Promise.all([
+        axios.get(`http://3.39.234.97:8080/news/search/house-price`),
+        axios.get(`http://3.39.234.97:8080/news/search/youth-house`),
+      ]);
 
-      const items = response.data?.data?.items;
-      if (!items || !Array.isArray(items)) {
-        console.warn("뉴스 응답에 items가 없습니다.");
-        return;
-      }
+      const mapItems = (items: any[]): NewsItem[] =>
+        items.map((item) => ({
+          newsTitle: item.title,
+          newsSummary: item.description,
+          originallink: item.originallink,
+          newsImage: item.thumbnail,
+        }));
 
-      const formattedNews = items.map((item: any) => ({
-        newsTitle: item.title,
-        newsSummary: item.description,
-        newsImage: item.thumbnail,
-      }));
-
-      set({ newsList: formattedNews });
+      set({
+        youthHousingNews: mapItems(youthRes.data.data.items),
+        housingPriceNews: mapItems(priceRes.data.data.items),
+      });
     } catch (error) {
-      console.error("뉴스 데이터 가져오기 실패:", error);
+      console.error("뉴스 불러오기 실패:", error);
     }
   },
 }));

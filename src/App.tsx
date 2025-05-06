@@ -12,8 +12,8 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/house" element={<HouseInfo />} />
         <Route path="/guide" element={<UseGuide />} />
-        <Route path="/newsList" element={<NewsList search="청년주택" />} />
-        <Route path="/newsList" element={<NewsList search="주택가격" />} />
+        <Route path="/newsList" element={<NewsList search="youth-house" />} />
+
         <Route path="/search" element={<FindMap />} />
       </Routes>
     </Router>

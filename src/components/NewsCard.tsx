@@ -1,34 +1,27 @@
-import { useEffect } from "react";
-import { useNewsStore } from "../store/newsStore";
+import React from "react";
 
 interface NewsCardProps {
-  search: string;
+  newsTitle: string;
+  newsSummary: string;
+  newsImage: string;
 }
 
-const NewsCard = ({ search }: NewsCardProps) => {
-  const { newsList, fetchNews } = useNewsStore();
-
-  useEffect(() => {
-    fetchNews(search);
-  }, [search]);
-
-  if (newsList.length === 0) {
-    return <p className="text-center text-gray-500">뉴스가 없습니다.</p>;
-  }
-
+const NewsCard: React.FC<NewsCardProps> = ({
+  newsTitle,
+  newsSummary,
+  newsImage,
+}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {newsList.map((news, index) => (
-        <div key={index} className="p-4 border rounded shadow">
-          <img
-            src={news.newsImage}
-            alt={news.newsTitle}
-            className="w-full h-48 object-cover rounded mb-2"
-          />
-          <h3 className="text-lg font-bold">{news.newsTitle}</h3>
-          <p className="text-sm text-gray-600">{news.newsSummary}</p>
-        </div>
-      ))}
+      <div className="p-4 rounded">
+        <img
+          src={newsImage}
+          alt={newsTitle}
+          className="w-full h-48 object-cover rounded mb-2"
+        />
+        <h3 className="text-lg font-bold">{newsTitle}</h3>
+        <p className="text-sm text-gray-600">{newsSummary}</p>
+      </div>
     </div>
   );
 };

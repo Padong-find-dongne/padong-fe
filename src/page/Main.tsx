@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import Header from "../components/Header";
 import NewsCard from "../components/NewsCard";
@@ -5,14 +6,19 @@ import { useNavigate } from "react-router-dom";
 import { useNewsStore } from "../store/newsStore";
 import "../styles/Main.css";
 import { BiSolidQuoteLeft } from "react-icons/bi";
-const Main = () => {
+
+const Main: React.FC = () => {
+  const { youthHousingNews, housingPriceNews, fetchAllNews } = useNewsStore();
   const navigate = useNavigate();
   const handleGuideClick = () => {
     navigate("/guide");
   };
+  useEffect(() => {
+    fetchAllNews();
+  }, []);
 
   return (
-    <div>
+    <div className="mb-20">
       <Header />
       <div className="flex items-center justify-center bg-[url(/images/banner1.png)] bg-center bg-cover Banner">
         <div className="main-search-place">
@@ -34,6 +40,7 @@ const Main = () => {
           </div>
         </div>
       </div>
+      {/*뉴스 리스트*/}
       <div className="news-list px-30 mt-20">
         <div className="flex justify-between">
           <div className="inline-flex flex-col">
@@ -44,8 +51,14 @@ const Main = () => {
           </div>
           <span className="text-[#6D6D6D]">더보기</span>
         </div>
-        <NewsCard search="주택가격" />
-        <NewsCard search="청년주택" />
+        <div className="mt-10 grid grid-cols-4 sm:grid-cols-2 gap-4">
+          {[
+            ...youthHousingNews.slice(0, 2),
+            ...housingPriceNews.slice(0, 2),
+          ].map((item, index) => (
+            <NewsCard key={index} {...item} />
+          ))}
+        </div>
       </div>
     </div>
   );

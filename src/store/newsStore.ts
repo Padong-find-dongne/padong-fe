@@ -21,8 +21,8 @@ export const useNewsStore = create<NewsStore>((set) => ({
   fetchAllNews: async () => {
     try {
       const [youthRes, priceRes] = await Promise.all([
-        axios.get(`http://3.39.234.97:8080/news/search/house-price`),
-        axios.get(`http://3.39.234.97:8080/news/search/youth-house`),
+        axios.get(`/api/news/search/house-price`),
+        axios.get(`/api/news/search/youth-house`),
       ]);
 
       const mapItems = (items: any[]): NewsItem[] =>

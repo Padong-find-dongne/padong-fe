@@ -6,10 +6,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      "/news": {
-        target: "http://localhost:8080", // 백엔드 주소
+      "/api": {
+        target: "http://3.39.234.97:8080",
         changeOrigin: true,
-        rewrite: (path) => path,
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

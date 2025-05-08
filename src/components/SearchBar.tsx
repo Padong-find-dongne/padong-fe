@@ -2,12 +2,9 @@ import { useSearchStore } from "../store/SearchStore";
 import { useAutoStore } from "../store/AutoStore";
 import { GrSearch } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
-import AutoList from "./AutoList";
 import axios from "axios";
-
+import { useBoundaryStore } from "../store/BoundaryStore";
 const SearchBar = () => {
-  const { setQuery, fetchSuggestions } = useAutoStore();
-  //SearchStore 상태
   const {
     inputType,
     setInputType,
@@ -17,119 +14,92 @@ const SearchBar = () => {
     setMultiDestination,
   } = useSearchStore();
 
+  // 상단 선언
+  const { fetchBoundary } = useBoundaryStore();
+  const { suggestions, setQuery, fetchSuggestions, clear } = useAutoStore();
   const navigate = useNavigate();
-  // inputType에 따라 다르게 렌더링되는 input의 value를 설정하는 함수
-  const handleInputChange = (index: number, value: string) => {
-    const newDong = { dongName: value, dongCode: "" };
-    setMultiDestination(index, newDong);
 
-    setQuery(value); // 자동완성 검색어 상태 설정
+  const handleInputChange = (index: number, value: string) => {
+    setMultiDestination(index, { dongName: value, dongCode: "" });
+    setQuery(value);
     fetchSuggestions(value);
   };
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+
+  const fetchSingleAdminDongCode = async (dongName: string) => {
+    try {
+      const res = await fetch(
+        `/api/mobility/address?address=${encodeURIComponent(dongName)}`
+      );
+      const data = await res.json();
+      return data?.data?.[0]?.departureDong?.adminDongCode ?? null;
+    } catch {
+      return null;
+    }
+  };
+
+  const fetchMultiAdminDongCodes = async (addr1: string, addr2: string) => {
+    try {
+      const res = await fetch(
+        `/api/mobility/address/multi?address1=${encodeURIComponent(
+          addr1
+        )}&address2=${encodeURIComponent(addr2)}&page=0`
+      );
+      const data = await res.json();
+      const code1 =
+        data?.data?.firstMobility?.[0]?.departureDong?.adminDongCode;
+      const code2 =
+        data?.data?.secondMobility?.[0]?.departureDong?.adminDongCode;
+      return code1 && code2 ? [code1, code2] : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const handleSelect = async (dongName: string, index: number = 0) => {
+    const dongCode = await fetchSingleAdminDongCode(dongName);
+    if (!dongCode) return;
+
+    if (inputType === "option1") {
+      setSingleDestination({ dongName, dongCode });
+    } else {
+      setMultiDestination(index, { dongName, dongCode });
+    }
+
+    clear();
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
       handleNext();
       navigate("/search");
     }
   };
 
-  //행정동 코드 요청
-  const fetchAdminDongCode = async (
-    address1: string,
-    address2?: string
-  ): Promise<string[] | null> => {
-    try {
-      let url = "";
-
-      if (address2) {
-        // option2: 멀티 목적지
-        url = `http://3.39.234.97:8080/mobility/address/multi?address1=${encodeURIComponent(
-          address1
-        )}&address2=${encodeURIComponent(address2)}&page=0`;
-      } else {
-        // option1: 단일 목적지
-        url = `http://3.39.234.97:8080/mobility/address?address=${encodeURIComponent(
-          address1
-        )}`;
-      }
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (!data?.data) throw new Error("데이터가 없습니다.");
-      if (address2) {
-        // 목적지 2개인 경우
-        if (
-          data?.data?.firstMobility?.[0]?.departureDong?.adminDongCode &&
-          data?.data?.secondMobility?.[0]?.departureDong?.adminDongCode
-        ) {
-          return [
-            data.data.firstMobility[0].departureDong.adminDongCode,
-            data.data.secondMobility[0].departureDong.adminDongCode,
-          ];
-        } else {
-          throw new Error("두 개의 행정동 코드를 모두 찾을 수 없습니다.");
-        }
-      } else {
-        // 목적지 1개 경우
-        if (data?.data?.[0]?.departureDong?.adminDongCode) {
-          return [data.data[0].departureDong.adminDongCode]; // 단일도 배열로 반환
-        } else {
-          throw new Error("행정동 코드를 찾을 수 없습니다.");
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching adminDongCode:", error);
-      return null;
-    }
-  };
   const handleNext = async () => {
+    navigate("/search");
     if (inputType === "option1") {
-      const codes = await fetchAdminDongCode(singleDestination.dongName);
-      if (!codes || !codes[0]) {
-        alert("행정동 코드를 찾을 수 없습니다.");
-        return;
-      }
+      const code =
+        singleDestination.dongCode ||
+        (await fetchSingleAdminDongCode(singleDestination.dongName));
+      if (!code) return alert("행정동 코드를 찾을 수 없습니다.");
+      const boundary = await fetchBoundary(code);
 
-      const boundaryPoints = await fetchBoundary(codes[0]); // 단일 경계
-      console.log("경계 좌표:", boundaryPoints);
-    } else if (inputType === "option2") {
+      console.log("경계 좌표:", boundary);
+    } else {
       const [addr1, addr2] = multiDestinations.map((d) => d.dongName);
-      const codes = await fetchAdminDongCode(addr1, addr2);
-      if (!codes || codes.length !== 2) {
-        alert("두 개의 행정동 코드를 모두 찾을 수 없습니다.");
-        return;
-      }
-
-      const boundary1 = await fetchBoundary(codes[0]);
-      const boundary2 = await fetchBoundary(codes[1]);
-
-      console.log("경계 좌표1:", boundary1);
-      console.log("경계 좌표2:", boundary2);
-    }
-  };
-
-  const fetchBoundary = async (adminDongCode: string) => {
-    try {
-      const response = await fetch(
-        `http://3.39.234.97:8080/boundary/${adminDongCode}`
-      );
-      const data = await response.json();
-      if (data && data.data) {
-        return data.data;
-      } else {
-        throw new Error("경계 좌표를 찾을 수 없습니다.");
-      }
-    } catch (error) {
-      console.error("Error fetching boundary:", error);
-
-      return null;
+      const codes = await fetchMultiAdminDongCodes(addr1, addr2);
+      if (!codes) return alert("두 개의 행정동 코드를 찾을 수 없습니다.");
+      const [b1, b2] = await Promise.all([
+        fetchBoundary(codes[0]),
+        fetchBoundary(codes[1]),
+      ]);
+      console.log("경계1:", b1);
+      console.log("경계2:", b2);
     }
   };
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      {/* 선택 요소 */}
       <div className="flex my-0 space-x-15">
         <button
           className={`px-9 py-1 rounded-t-2xl ${
@@ -153,36 +123,38 @@ const SearchBar = () => {
         </button>
       </div>
 
-      {/* 조건부 input 렌더링 */}
-
       {inputType === "option1" ? (
         <div className="relative items-center w-screen max-w-xl">
           <input
             type="text"
-            value={singleDestination?.dongName || ""}
+            value={singleDestination.dongName}
             onChange={(e) => {
               const q = e.target.value;
               setSingleDestination({ dongName: q, dongCode: "" });
-
               setQuery(q);
-              fetchSuggestions(q); // lodash debounce로 서버 요청
+              fetchSuggestions(q);
             }}
             onKeyDown={handleKeyPress}
-            placeholder={"목적지(출근지,회사 등)의 지역명을 검색해보세요"}
-            className=" w-full pr-10 pl-4 py-2.5 text-sm border border-[#2e58e4] rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="목적지(출근지,회사 등)의 지역명을 검색해보세요"
+            className="w-full pr-10 pl-4 py-2.5 text-sm border border-[#2e58e4] rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="absolute top-1 right-3 p-1.5 text-[#2e58e4] rounded-full">
             <GrSearch className="text-lg cursor-pointer" onClick={handleNext} />
           </div>
-          {/* 자동완성 리스트 */}
-          <AutoList
-            onSelect={(dong) => {
-              setSingleDestination({
-                dongName: dong.departureDong.address,
-                dongCode: dong.departureDong.adminDongCode,
-              });
-            }}
-          />
+
+          {suggestions.length > 0 && (
+            <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">
+              {suggestions.map((item, idx) => (
+                <li
+                  key={idx}
+                  onClick={() => handleSelect(item)}
+                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       ) : (
         <div className="relative w-screen max-w-xl border rounded-lg border-[#2e58e4]">
@@ -190,30 +162,39 @@ const SearchBar = () => {
             <div key={idx} className="border-b border-gray-300 relative">
               <input
                 type="text"
-                value={multiDestinations[idx]?.dongName || ""}
+                value={multiDestinations[idx].dongName}
                 onChange={(e) => handleInputChange(idx, e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder={"목적지(출근지,회사 등)의 지역명을 검색해보세요"}
-                className="border-none w-full pr-10 pl-4 py-2.5 indent-14 text-sm border border-[#2e58e4] rounded focus:outline-none focus:ring-2 focus:ring-blue-500 "
+                placeholder="목적지(출근지,회사 등)의 지역명을 검색해보세요"
+                className="w-full pr-10 pl-4 py-2.5 indent-14 text-sm border border-[#2e58e4] rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <span className="absolute text-xs text-white bg-[#2e58e4] p-1 rounded-md left-3 top-1/2 transform -translate-y-1/2">{`출근지 ${
-                idx + 1
-              }`}</span>
+              <span className="absolute text-xs text-white bg-[#2e58e4] p-1 rounded-md left-3 top-1/2 transform -translate-y-1/2">
+                출근지 {idx + 1}
+              </span>
+
+              {suggestions.length > 0 && (
+                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">
+                  {suggestions.map((item, sIdx) => (
+                    <li
+                      key={sIdx}
+                      onClick={() => handleSelect(item, idx)}
+                      className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           ))}
 
           <div className="absolute top-5 right-3 p-1.5 bg-[#2e58e4] text-[#FFFFFF] rounded-full">
             <GrSearch className="text-lg cursor-pointer" onClick={handleNext} />
           </div>
-          {/* 자동완성 리스트 */}
-          <AutoList
-            onSelect={(dong) => {
-              setMultiDestination(idx, dong);
-            }}
-          />
         </div>
       )}
     </div>
   );
 };
+
 export default SearchBar;

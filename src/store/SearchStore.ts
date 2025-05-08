@@ -1,38 +1,38 @@
 import { create } from "zustand";
 
-type Dong = {
+type Destination = {
   dongName: string;
   dongCode: string;
 };
 
-type SearchStore = {
-  inputType: string;
-  setInputType: (type: string) => void;
+type InputType = "option1" | "option2";
 
-  // option1용
-  singleDestination: Dong | null;
-  setSingleDestination: (dong: Dong | null) => void;
+interface SearchState {
+  inputType: InputType;
+  setInputType: (type: InputType) => void;
 
-  // option2용
-  multiDestinations: [Dong | null, Dong | null];
-  setMultiDestination: (index: number, dong: Dong | null) => void;
-};
+  singleDestination: Destination;
+  setSingleDestination: (d: Destination) => void;
 
-export const useSearchStore = create<SearchStore>((set) => ({
+  multiDestinations: Destination[];
+  setMultiDestination: (index: number, d: Destination) => void;
+}
+
+export const useSearchStore = create<SearchState>((set) => ({
   inputType: "option1",
   setInputType: (type) => set({ inputType: type }),
 
-  singleDestination: null,
-  setSingleDestination: (dong) => set({ singleDestination: dong || null }),
+  singleDestination: { dongName: "", dongCode: "" },
+  setSingleDestination: (d) => set({ singleDestination: d }),
 
-  multiDestinations: [null, null],
-  setMultiDestination: (index, dong) =>
+  multiDestinations: [
+    { dongName: "", dongCode: "" },
+    { dongName: "", dongCode: "" },
+  ],
+  setMultiDestination: (index, d) =>
     set((state) => {
-      const updated = [...state.multiDestinations] as [
-        Dong | null,
-        Dong | null
-      ];
-      updated[index] = dong || null;
+      const updated = [...state.multiDestinations];
+      updated[index] = d;
       return { multiDestinations: updated };
     }),
 }));

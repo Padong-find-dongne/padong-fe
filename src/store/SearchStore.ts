@@ -14,6 +14,7 @@ export type Recommendation = {
   avgMonthlyDeposit: number;
   avgMonthlyRent: number;
 };
+
 type Destination = {
   dongName: string;
   dongCode: string;

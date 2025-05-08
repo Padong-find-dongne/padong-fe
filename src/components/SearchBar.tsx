@@ -83,7 +83,6 @@ const SearchBar = () => {
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleNext();
-      navigate("/search");
     }
   };
   const handleNext = async () => {

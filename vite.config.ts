@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://padong.site",
+        target: "https://padong.site",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

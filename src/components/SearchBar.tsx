@@ -18,7 +18,19 @@ const SearchBar = () => {
   const { fetchBoundary } = useBoundaryStore();
   const { suggestions, setQuery, fetchSuggestions, clear } = useAutoStore();
   const navigate = useNavigate();
+  const { setRecommendations } = useSearchStore();
 
+  const fetchRecommendations = async (address: string) => {
+    try {
+      const res = await axios.get(
+        `/api/mobility/address?address=${encodeURIComponent(address)}`
+      );
+      return res.data?.data ?? [];
+    } catch (e) {
+      console.error("추천 요청 실패:", e);
+      return [];
+    }
+  };
   const handleInputChange = (index: number, value: string) => {
     setMultiDestination(index, { dongName: value, dongCode: "" });
     setQuery(value);
@@ -74,27 +86,35 @@ const SearchBar = () => {
       navigate("/search");
     }
   };
-
   const handleNext = async () => {
-    navigate("/search");
     if (inputType === "option1") {
+      const dongName = singleDestination.dongName;
       const code =
         singleDestination.dongCode ||
-        (await fetchSingleAdminDongCode(singleDestination.dongName));
+        (await fetchSingleAdminDongCode(dongName));
       if (!code) return alert("행정동 코드를 찾을 수 없습니다.");
+
       const boundary = await fetchBoundary(code);
 
-      console.log("경계 좌표:", boundary);
+      const recommendations = await fetchRecommendations(dongName);
+      setRecommendations(recommendations); // zustand store에 저장
+
+      navigate("/search");
     } else {
       const [addr1, addr2] = multiDestinations.map((d) => d.dongName);
       const codes = await fetchMultiAdminDongCodes(addr1, addr2);
       if (!codes) return alert("두 개의 행정동 코드를 찾을 수 없습니다.");
+
       const [b1, b2] = await Promise.all([
         fetchBoundary(codes[0]),
         fetchBoundary(codes[1]),
       ]);
-      console.log("경계1:", b1);
-      console.log("경계2:", b2);
+
+      // 추천은 첫 번째 목적지 기준으로 받아오기
+      const recommendations = await fetchRecommendations(addr1);
+      setRecommendations(recommendations);
+
+      navigate("/search");
     }
   };
 

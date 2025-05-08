@@ -4,15 +4,20 @@ import Header from "../components/Header";
 import NewsCard from "../components/NewsCard";
 import { useNavigate } from "react-router-dom";
 import { useNewsStore } from "../store/newsStore";
-import "../styles/Main.css";
+import "../styles/Media.css";
 import { BiSolidQuoteLeft } from "react-icons/bi";
 
 const Main: React.FC = () => {
   const { youthHousingNews, housingPriceNews, fetchAllNews } = useNewsStore();
   const navigate = useNavigate();
+  // 페이지 이동
   const handleGuideClick = () => {
     navigate("/guide");
   };
+  const handleNewsClick = () => {
+    navigate("/news-list");
+  };
+  //뉴스 렌더링
   useEffect(() => {
     fetchAllNews();
   }, []);
@@ -22,7 +27,7 @@ const Main: React.FC = () => {
       <Header />
       <div className="flex items-center justify-center bg-[url(/images/banner1.png)] bg-center bg-cover Banner">
         <div className="main-search-place">
-          <div className="space-y-2 flex flex-col py-12 banner-text">
+          <div className="space-y-2 flex flex-col align-center justify-center py-12 banner-text">
             <BiSolidQuoteLeft className="text-2xl opacity-25" />
             <span className="text-[#2e58e4] text-4xl font-semibold ">
               출근길
@@ -41,17 +46,19 @@ const Main: React.FC = () => {
         </div>
       </div>
       {/*뉴스 리스트*/}
-      <div className="news-list px-30 mt-20">
+      <div className="news-list m-20 px-5">
         <div className="flex justify-between">
           <div className="inline-flex flex-col">
-            <span className="text-3xl text-bold border-b">News</span>
+            <span className="text-3xl font-bold border-b">News</span>
             <span className="text-[#818181] mt-3">
               주택 정보 및 뉴스를 확인하세요.
             </span>
           </div>
-          <span className="text-[#6D6D6D]">더보기</span>
+          <span onClick={handleNewsClick} className="text-[#6D6D6D]">
+            더보기
+          </span>
         </div>
-        <div className="mt-10 grid grid-cols-4 sm:grid-cols-2 gap-4">
+        <div className="news-grid mt-10 grid grid-cols-4 gap-4">
           {[
             ...youthHousingNews.slice(0, 2),
             ...housingPriceNews.slice(0, 2),

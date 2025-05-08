@@ -31,10 +31,9 @@ const SeoulMap = () => {
 
         if (!Array.isArray(rawPoints) || rawPoints.length < 3) return null;
 
-        const latlngs = rawPoints.map(([lng, lat]: [number, number]) => [
-          lat,
-          lng,
-        ]);
+        const latlngs: [number, number][] = rawPoints.map(
+          ([lng, lat]: [number, number]) => [lat, lng]
+        );
 
         return (
           <Polygon

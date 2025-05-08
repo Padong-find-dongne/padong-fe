@@ -5,7 +5,6 @@ import LocateInfo from "./page/LocateInfo";
 import UseGuide from "./page/UseGuide";
 import NewsList from "./page/NewsList";
 import FindDong from "./page/FindDong";
-import { useState } from "react";
 import FindMap from "./page/FindMap";
 
 function App() {

@@ -94,7 +94,7 @@ const SearchBar = () => {
         (await fetchSingleAdminDongCode(dongName));
       if (!code) return alert("행정동 코드를 찾을 수 없습니다.");
 
-      const boundary = await fetchBoundary(code);
+      const _boundary = await fetchBoundary(code);
 
       const recommendations = await fetchRecommendations(dongName);
       setRecommendations(recommendations); // zustand store에 저장
@@ -105,7 +105,7 @@ const SearchBar = () => {
       const codes = await fetchMultiAdminDongCodes(addr1, addr2);
       if (!codes) return alert("두 개의 행정동 코드를 찾을 수 없습니다.");
 
-      const [b1, b2] = await Promise.all([
+      const [_b1, _b2] = await Promise.all([
         fetchBoundary(codes[0]),
         fetchBoundary(codes[1]),
       ]);

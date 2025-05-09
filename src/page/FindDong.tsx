@@ -215,12 +215,14 @@ const FindDong = () => {
             )}
           </div>
         </aside>
-        <DongDetailMap
-          end={{
-            lat: arrivalLocation.lat,
-            lng: arrivalLocation.lng,
-          }}
-        />
+        {arrivalLocation && (
+          <DongDetailMap
+            end={{
+              lat: arrivalLocation.lat,
+              lng: arrivalLocation.lng,
+            }}
+          />
+        )}
       </div>
     </div>
   );

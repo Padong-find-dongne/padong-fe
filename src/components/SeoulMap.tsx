@@ -3,7 +3,8 @@ import "leaflet/dist/leaflet.css";
 import { useSearchStore } from "../store/SearchStore";
 
 const SeoulMap = () => {
-  const { boundaryData } = useSearchStore();
+  const { boundaryData }: { boundaryData: Record<string, BoundaryData> } =
+    useSearchStore();
 
   // boundaryData가 배열 형태로 되어 있을 때의 타입 정의
   type BoundaryData = {

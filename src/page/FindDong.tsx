@@ -146,19 +146,19 @@ const FindDong = () => {
             switch (item.buildingType) {
               case "apartment":
                 buildingText = "아파트";
-                imagePath = "public/images/apart.png";
+                imagePath = "/images/apart.png";
                 break;
               case "officetel":
                 buildingText = "오피스텔";
-                imagePath = "public/images/opistel.png";
+                imagePath = "/images/opistel.png";
                 break;
               case "villa":
                 buildingText = "빌라";
-                imagePath = "public/images/billa.png";
+                imagePath = "/images/billa.png";
                 break;
               default:
                 buildingText = item.buildingType;
-                imagePath = "public/images/apart.png";
+                imagePath = "/images/apart.png";
             }
 
             return (

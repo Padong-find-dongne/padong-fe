@@ -12,7 +12,7 @@ type Position = {
 const DongDetailMap = ({ end }: Position) => {
   return (
     <MapContainer
-      center={end} // 서울 중심
+      center={end}
       zoom={15}
       style={{ height: "700px", width: "80%" }}
     >

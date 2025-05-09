@@ -15,7 +15,9 @@ export const useBoundaryStore = create<BoundaryStore>((set, get) => ({
     if (existing) return existing;
 
     try {
-      const res = await axios.get(`/api/boundary/${adminDongCode}`);
+      const res = await axios.get(
+        `https://padong.site/boundary/${adminDongCode}`
+      );
       const data = res.data?.data ?? null;
 
       if (data) {

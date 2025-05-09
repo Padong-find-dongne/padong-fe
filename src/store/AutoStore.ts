@@ -18,7 +18,9 @@ export const useAutoStore = create<AutoStore>((set) => {
 
     try {
       const res = await fetch(
-        `/api/open-search/keyword?keyword=${encodeURIComponent(q)}`,
+        `https://padong.site/open-search/keyword?keyword=${encodeURIComponent(
+          q
+        )}`,
         {
           method: "GET",
           headers: {

@@ -45,7 +45,7 @@ const FindDong = () => {
     ) => {
       try {
         const res = await axios.get(
-          `/api/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
+          `https://padong.site/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
         );
         const data = res.data?.data;
         setDongDetail(data ?? null);

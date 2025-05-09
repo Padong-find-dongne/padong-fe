@@ -23,7 +23,9 @@ const SearchBar = () => {
   const fetchRecommendations = async (address: string) => {
     try {
       const res = await axios.get(
-        `/api/mobility/address?address=${encodeURIComponent(address)}`
+        `https://padong.site/mobility/address?address=${encodeURIComponent(
+          address
+        )}`
       );
       return res.data?.data ?? [];
     } catch (e) {
@@ -40,7 +42,9 @@ const SearchBar = () => {
   const fetchSingleAdminDongCode = async (dongName: string) => {
     try {
       const res = await fetch(
-        `/api/mobility/address?address=${encodeURIComponent(dongName)}`
+        `https://padong.site/mobility/address?address=${encodeURIComponent(
+          dongName
+        )}`
       );
       const data = await res.json();
       return data?.data?.[0]?.departureDong?.adminDongCode ?? null;
@@ -52,7 +56,7 @@ const SearchBar = () => {
   const fetchMultiAdminDongCodes = async (addr1: string, addr2: string) => {
     try {
       const res = await fetch(
-        `/api/mobility/address/multi?address1=${encodeURIComponent(
+        `https://padong.site/mobility/address/multi?address1=${encodeURIComponent(
           addr1
         )}&address2=${encodeURIComponent(addr2)}&page=0`
       );

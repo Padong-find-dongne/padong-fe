@@ -20,8 +20,8 @@ export const useNewsStore = create<NewsStore>((set) => ({
   fetchAllNews: async () => {
     try {
       const [youthRes, priceRes] = await Promise.all([
-        axios.get(`/api/news/search/house-price`),
-        axios.get(`/api/news/search/youth-house`),
+        axios.get(`https://padong.site/news/search/house-price`),
+        axios.get(`https://padong.site/news/search/youth-house`),
       ]);
 
       const mapItems = (items: any[]): NewsItem[] =>

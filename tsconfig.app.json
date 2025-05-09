@@ -13,6 +13,8 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "jsx": "react-jsx",
+    "outDir": "dist",
+    "rootDir": "./src",
 
     /* Linting */
     "strict": false,

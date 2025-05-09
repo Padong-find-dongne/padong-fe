@@ -1,53 +1,31 @@
-import { useEffect } from "react";
 import { MapContainer, TileLayer, Polygon } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { useBoundaryStore } from "../store/BoundaryStore"; // 경로는 실제 위치에 맞게 수정
-
-// 예시: 미리 불러올 행정동 코드 배열
-const adminDongCodes = ["1168064000", "1168065000"]; // 필요에 따라 동적으로 받아도 됨
+import { useSearchStore } from "../store/SearchStore";
 
 const SeoulMap = () => {
-  const { boundaries, fetchBoundary } = useBoundaryStore();
-
-  useEffect(() => {
-    adminDongCodes.forEach((code) => {
-      fetchBoundary(code);
-    });
-  }, [fetchBoundary]);
-
+  const { boundaryData } = useSearchStore();
+  type BoundaryData = {
+    points: number[][];
+  };
   return (
     <MapContainer
-      center={[37.5665, 126.978]}
-      zoom={12}
-      style={{ height: "100vh", width: "100%" }}
+      center={[37.5665, 126.978]} // 서울 중심
+      zoom={11}
+      style={{ height: "600px", width: "100%" }}
     >
       <TileLayer
-        attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="&copy; OpenStreetMap contributors"
       />
 
-      {Object.entries(boundaries).map(([key, boundary], idx) => {
-        const rawPoints = boundary?.points;
-
-        if (!Array.isArray(rawPoints) || rawPoints.length < 3) return null;
-
-        const latlngs: [number, number][] = rawPoints.map(
-          ([lng, lat]: [number, number]) => [lat, lng]
-        );
-
-        return (
+      {boundaryData &&
+        Object.entries(boundaryData).map(([code, { points }]) => (
           <Polygon
-            key={key || idx}
-            positions={latlngs}
-            pathOptions={{
-              color: "blue",
-              weight: 2,
-              opacity: 0.6,
-              fillOpacity: 0.3,
-            }}
+            key={code}
+            positions={points.map(([lng, lat]) => [lat, lng])} // Leaflet은 [lat, lng] 순서!
+            pathOptions={{ color: "#4A6CDF", fillOpacity: 0.4 }}
           />
-        );
-      })}
+        ))}
     </MapContainer>
   );
 };

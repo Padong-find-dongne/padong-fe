@@ -1,20 +1,55 @@
 import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import { useSearchStore } from "../store/SearchStore";
 import SeoulMap from "../components/SeoulMap";
 import Header from "../components/Header";
 import "../styles/Media.css";
 import type { Recommendation } from "../store/SearchStore";
-
+import axios from "axios";
 const FindMap = () => {
-  const { recommendations } = useSearchStore();
-  const { singleDestination, multiDestinations, inputType } = useSearchStore();
+  const {
+    recommendations,
+    setSelectedRecommendation,
+    singleDestination,
+    multiDestinations,
+    inputType,
+    setBoundaryData,
+  } = useSearchStore();
+
   const navigate = useNavigate();
 
-  const { setSelectedRecommendation } = useSearchStore();
   const handleDong = (data: Recommendation) => () => {
     setSelectedRecommendation(data);
     navigate("/detail-dong");
   };
+
+  type BoundaryMap = {
+    [code: string]: { points: number[][] };
+  };
+
+  useEffect(() => {
+    const fetchBoundaries = async () => {
+      const codes = recommendations.map((r) => r.departureDong.adminDongCode);
+
+      const allData: BoundaryMap = {};
+
+      await Promise.all(
+        codes.map(async (code) => {
+          try {
+            const res = await axios.get(`/api/boundary/${code}`);
+            allData[code] = res.data.data; // { points: [...] }
+          } catch (e) {
+            console.error(`${code} boundary 요청 실패`, e);
+          }
+        })
+      );
+
+      setBoundaryData(allData);
+    };
+
+    if (recommendations.length > 0) fetchBoundaries();
+  }, [recommendations]);
+
   return (
     <div>
       <Header />
@@ -93,7 +128,7 @@ const FindMap = () => {
                     </div>
                     <div className="col-span-2">
                       {" "}
-                      <span>출퇴근 거리</span>
+                      <span>평균 유동인구</span>
                       {rec.totalMobility}
                     </div>
                   </div>

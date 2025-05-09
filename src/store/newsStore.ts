@@ -14,15 +14,14 @@ interface NewsStore {
   housingPriceNews: NewsItem[];
   fetchAllNews: () => Promise<void>;
 }
-
 export const useNewsStore = create<NewsStore>((set) => ({
   youthHousingNews: [],
   housingPriceNews: [],
   fetchAllNews: async () => {
     try {
       const [youthRes, priceRes] = await Promise.all([
-        axios.get("https://padong.site/news/search/house-price"),
-        axios.get("https://padong.site/news/search/youth-house"),
+        axios.get(`/api/news/search/house-price`),
+        axios.get(`/api/news/search/youth-house`),
       ]);
 
       const mapItems = (items: any[]): NewsItem[] =>

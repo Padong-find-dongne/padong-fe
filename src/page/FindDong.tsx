@@ -4,11 +4,18 @@ import axios from "axios";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import Mobility from "../components/Mobility";
+import DongDetailMap from "../components/DongDetailMap";
 type RentPrice = {
   buildingType: string;
   avgJeonseDeposit: number;
   avgMonthlyDeposit: number;
   avgMonthlyRent: number;
+};
+type DongLocation = {
+  address: string;
+  type: string;
+  lat: number;
+  lng: number;
 };
 
 type DongDetailData = {
@@ -22,13 +29,15 @@ type DongDetailData = {
   crimes: number;
   publicSafety: number;
   rentPrice: RentPrice[];
+  location: DongLocation[];
 };
-const FindMap = () => {
+const FindDong = () => {
   const { selectedRecommendation, singleDestination } = useSearchStore();
   const [dongDetail, setDongDetail] = useState<DongDetailData | null>(null);
   const departureCode = singleDestination.dongCode;
   const arrivalCode = selectedRecommendation?.departureDong.adminDongCode || "";
 
+  const [location, setLocation] = useState<DongLocation[]>([]);
   useEffect(() => {
     const fetchDongDetail = async (
       arrivalCode: string,
@@ -38,7 +47,9 @@ const FindMap = () => {
         const res = await axios.get(
           `/api/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
         );
-        setDongDetail(res.data?.data ?? null);
+        const data = res.data?.data;
+        setDongDetail(data ?? null);
+        setLocation(data?.location ?? []); // ✅ 위치도 배열로 저장
       } catch (e) {
         console.error("추천 요청 실패:", e);
       }
@@ -51,11 +62,14 @@ const FindMap = () => {
 
   if (!dongDetail) return <div>로딩 중...</div>;
 
+  const departureLocation = location.find((loc) => loc.type === "departure");
+  const arrivalLocation = location.find((loc) => loc.type === "arrival");
+
   return (
     <div>
       <Header />
-      <div className="mt-5 ml-10 mr-10 flex flex-row space-x-10">
-        <aside className="basis-1/2 w-100 flex flex-col ">
+      <div className="mb-20 mt-5 ml-10 mr-10 flex flex-row space-x-30">
+        <aside className="h-[700px] snap-y overflow-y-auto basis-1/2 w-100 flex flex-col ">
           <div>
             <div className="p-2 w-full max-w-md border rounded-lg border-[#3356CC] border-2">
               <span className="font-[600] mr-2">출근지</span>
@@ -151,7 +165,7 @@ const FindMap = () => {
               <div className="mt-10" key={idx}>
                 <div className="flex items-center space-x-8">
                   <img
-                    className="w-[5.5vw] h-auto"
+                    className="w-[5vw] h-auto"
                     src={imagePath}
                     alt={buildingText}
                   />
@@ -174,18 +188,42 @@ const FindMap = () => {
                     {item.avgJeonseDeposit.toLocaleString()}
                   </span>
                 </div>
+
                 <hr className="mt-10 text-[#F2F2F2]" />
               </div>
             );
           })}
           <div>
-            <p>출근지까지 이동 시간</p>
-            <Mobility />
+            <p className="text-[#3D3D3D] font-bold text-2xl mt-5">
+              출근지까지 이동 시간
+            </p>
+            {departureLocation && arrivalLocation && (
+              <>
+                {console.log("출발지:", departureLocation)}
+                {console.log("도착지:", arrivalLocation)}
+                <Mobility
+                  start={{
+                    lat: departureLocation.lat,
+                    lng: departureLocation.lng,
+                  }}
+                  end={{
+                    lat: arrivalLocation.lat,
+                    lng: arrivalLocation.lng,
+                  }}
+                />
+              </>
+            )}
           </div>
         </aside>
+        <DongDetailMap
+          end={{
+            lat: arrivalLocation.lat,
+            lng: arrivalLocation.lng,
+          }}
+        />
       </div>
     </div>
   );
 };
 
-export default FindMap;
+export default FindDong;

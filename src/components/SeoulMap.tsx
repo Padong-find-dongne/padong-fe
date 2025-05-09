@@ -10,8 +10,8 @@ const SeoulMap = () => {
   return (
     <MapContainer
       center={[37.5665, 126.978]} // 서울 중심
-      zoom={11}
-      style={{ height: "600px", width: "100%" }}
+      zoom={12}
+      style={{ height: "900px", width: "100%" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

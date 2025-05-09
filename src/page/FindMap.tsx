@@ -36,7 +36,7 @@ const FindMap = () => {
       await Promise.all(
         codes.map(async (code) => {
           try {
-            const res = await axios.get(`https://padong.siteboundary/${code}`);
+            const res = await axios.get(`https://padong.site/boundary/${code}`);
             allData[code] = res.data.data; // { points: [...] }
           } catch (e) {
             console.error(`${code} boundary 요청 실패`, e);

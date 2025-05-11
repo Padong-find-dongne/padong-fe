@@ -6,12 +6,14 @@ import Header from "../components/Header";
 import "../styles/Media.css";
 import type { Recommendation } from "../store/SearchStore";
 import axios from "axios";
+import MultiMap from "../components/MultiMap";
 const FindMap = () => {
   const {
     recommendations,
     setSelectedRecommendation,
     singleDestination,
-    multiDestinations,
+    multiAddress1,
+    multiAddress2,
     inputType,
     setBoundaryData,
   } = useSearchStore();
@@ -55,35 +57,16 @@ const FindMap = () => {
       <Header />
       <div className="mt-5 ml-10 mr-10 flex flex-row space-x-10">
         <aside className="basis-1/2 w-100 flex flex-col ">
-          {/*inputType에 따라 다르게 렌더링*/}
-          {inputType === "option1" ? (
-            <div>
-              <div className="p-2 w-full max-w-md border rounded-lg border-[#3356CC] border-2">
-                <span className="font-[600] mr-2">출근지</span>
-                <span className="text-lg text-[#818181] mb-0.3 mr-5">|</span>
-                <span className="text-[#818181]">
-                  {singleDestination?.dongName || ""}
-                </span>
-              </div>
-            </div>
-          ) : (
+          <div>
             <div className="p-2 w-full max-w-md border rounded-lg border-[#3356CC] border-2">
-              <div className="border-b border-gray-200">
-                <span className="font-[600] mr-2">출근지1</span>
-                <span className="text-lg text-[#818181] mb-0.3 mr-5">|</span>
-                <span className="text-[#818181]">
-                  {multiDestinations[0]?.dongName || ""}
-                </span>
-              </div>
-              <div>
-                <span className="font-[600] mr-2">출근지2</span>
-                <span className="text-lg text-[#818181] mb-0.3 mr-5">|</span>
-                <span className="text-[#818181]">
-                  {multiDestinations[1]?.dongName || ""}
-                </span>
-              </div>
+              <span className="font-[600] mr-2">출근지</span>
+              <span className="text-lg text-[#818181] mb-0.3 mr-5">|</span>
+              <span className="text-[#818181]">
+                {singleDestination?.dongName || ""}
+              </span>
             </div>
-          )}
+          </div>
+
           <div className="mt-15 not-first-of-type:h-[700px] snap-y overflow-y-auto">
             {recommendations.map((rec) => (
               <div
@@ -137,7 +120,6 @@ const FindMap = () => {
             ))}
           </div>
         </aside>
-
         <SeoulMap />
       </div>
     </div>

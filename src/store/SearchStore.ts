@@ -1,10 +1,13 @@
 import { create } from "zustand";
+
+//공통  타입
+export type DepartureDong = {
+  adminDongCode: string;
+  address: string;
+};
 //추천 행정동 리스트
 export type Recommendation = {
-  departureDong: {
-    adminDongCode: string;
-    address: string;
-  };
+  departureDong: DepartureDong;
   score: number;
   totalMobility: number;
   avgTime: number;
@@ -20,6 +23,14 @@ type Destination = {
   dongCode: string;
 };
 
+//교차 행정동
+type IntersectedDongInfo = {
+  departureDong: DepartureDong;
+  totalMobility1: number;
+  totalMobility2: number;
+  avgTime1: number;
+  avgTime2: number;
+};
 type InputType = "option1" | "option2";
 
 interface SearchState {
@@ -28,9 +39,13 @@ interface SearchState {
 
   singleDestination: Destination;
   setSingleDestination: (d: Destination) => void;
+  // MultiDestinations을 각각 개별적으로 관리
+  multiAddress1: Destination;
+  setMultiAddress1: (d: Destination) => void;
 
-  multiDestinations: Destination[];
-  setMultiDestination: (index: number, d: Destination) => void;
+  multiAddress2: Destination;
+  setMultiAddress2: (d: Destination) => void;
+
   recommendations: Recommendation[];
   setRecommendations: (data: Recommendation[]) => void;
   boundaryData: any; // 실제 타입이 있다면 any 대신 사용
@@ -38,6 +53,17 @@ interface SearchState {
 
   selectedRecommendation: Recommendation | null;
   setSelectedRecommendation: (rec: Recommendation) => void;
+  firstMobility: Recommendation[];
+  setFirstMobility: (data: Recommendation[]) => void;
+  secondMobility: Recommendation[];
+  setSecondMobility: (data: Recommendation[]) => void;
+  intersectedMobility: IntersectedDongInfo[];
+  setIntersectedMobility: (data: IntersectedDongInfo[]) => void;
+  setMobilityData: (data: {
+    firstMobility: Recommendation[];
+    secondMobility: Recommendation[];
+    intersectedMobility: IntersectedDongInfo[];
+  }) => void;
 }
 
 export const useSearchStore = create<SearchState>((set) => ({
@@ -46,17 +72,11 @@ export const useSearchStore = create<SearchState>((set) => ({
 
   singleDestination: { dongName: "", dongCode: "" },
   setSingleDestination: (d) => set({ singleDestination: d }),
+  multiAddress1: { dongName: "", dongCode: "" },
+  setMultiAddress1: (d) => set({ multiAddress1: d }),
 
-  multiDestinations: [
-    { dongName: "", dongCode: "" },
-    { dongName: "", dongCode: "" },
-  ],
-  setMultiDestination: (index, d) =>
-    set((state) => {
-      const updated = [...state.multiDestinations];
-      updated[index] = d;
-      return { multiDestinations: updated };
-    }),
+  multiAddress2: { dongName: "", dongCode: "" },
+  setMultiAddress2: (d) => set({ multiAddress2: d }),
   boundaryData: null,
   setBoundaryData: (data) => set({ boundaryData: data }),
   // 추천 행정동 리스트
@@ -64,4 +84,11 @@ export const useSearchStore = create<SearchState>((set) => ({
   setRecommendations: (data) => set({ recommendations: data }),
   selectedRecommendation: null,
   setSelectedRecommendation: (data) => set({ selectedRecommendation: data }),
+  firstMobility: [],
+  setFirstMobility: (data) => set({ firstMobility: data }),
+  secondMobility: [],
+  setSecondMobility: (data) => set({ secondMobility: data }),
+  intersectedMobility: [],
+  setIntersectedMobility: (data) => set({ intersectedMobility: data }),
+  setMobilityData: (data) => set(data),
 }));

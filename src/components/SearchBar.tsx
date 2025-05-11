@@ -3,22 +3,44 @@ import { useAutoStore } from "../store/AutoStore";
 import { GrSearch } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useBoundaryStore } from "../store/BoundaryStore";
+import { useMultiAutoStore } from "../store/MultiAutoStore";
+
 const SearchBar = () => {
   const {
     inputType,
     setInputType,
     singleDestination,
     setSingleDestination,
-    multiDestinations,
-    setMultiDestination,
+    multiAddress1,
+    multiAddress2,
+    setFirstMobility,
+    setSecondMobility,
+    setIntersectedMobility,
+    setMultiAddress1,
+    setMultiAddress2,
+    setRecommendations,
   } = useSearchStore();
 
-  // 상단 선언
-  const { fetchBoundary } = useBoundaryStore();
   const { suggestions, setQuery, fetchSuggestions, clear } = useAutoStore();
+
+  const {
+    multiSuggestions,
+    setMultiQuery,
+    queries,
+    fetchMultiSuggestions,
+    clearSuggestions,
+  } = useMultiAutoStore();
+
   const navigate = useNavigate();
-  const { setRecommendations } = useSearchStore();
+  //멀티 인풋 관리
+  const multiDestinations = [multiAddress1, multiAddress2];
+  const setMultiDestination = (index: number, destination: any) => {
+    if (index === 0) {
+      setMultiAddress1(destination);
+    } else {
+      setMultiAddress2(destination);
+    }
+  };
 
   const fetchRecommendations = async (address: string) => {
     try {
@@ -33,55 +55,100 @@ const SearchBar = () => {
       return [];
     }
   };
+
+  // 다중 주소 추천 목록 fetch 함수
+  const fetchRecommendationsMulti = async (
+    address1: string,
+    address2: string
+  ) => {
+    try {
+      const res = await axios.get(
+        `https://padong.site/mobility/address/multi?address1=${encodeURIComponent(
+          address1
+        )}&address2=${encodeURIComponent(address2)}&page=1`
+      );
+      return res.data?.data ?? [];
+    } catch (e) {
+      console.error("추천 요청 실패:", e);
+      return [];
+    }
+  };
   const handleInputChange = (index: number, value: string) => {
-    setMultiDestination(index, { dongName: value, dongCode: "" });
     setQuery(value);
     fetchSuggestions(value);
   };
 
-  const fetchSingleAdminDongCode = async (dongName: string) => {
-    try {
-      const res = await fetch(
-        `https://padong.site/mobility/address?address=${encodeURIComponent(
-          dongName
-        )}`
-      );
-      const data = await res.json();
-      return data?.data?.[0]?.departureDong?.adminDongCode ?? null;
-    } catch {
-      return null;
-    }
+  const handleMultiInputChange = (index: number, value: string) => {
+    setMultiDestination(index, { dongName: value, dongCode: "" });
+    setMultiQuery(index, value);
   };
 
-  const fetchMultiAdminDongCodes = async (addr1: string, addr2: string) => {
+  const fetchAdminDongCode = async (
+    inputType: "option1" | "option2",
+    address1: string,
+    address2?: string
+  ): Promise<string | [string, string] | null> => {
     try {
-      const res = await fetch(
-        `https://padong.site/mobility/address/multi?address1=${encodeURIComponent(
-          addr1
-        )}&address2=${encodeURIComponent(addr2)}&page=0`
-      );
-      const data = await res.json();
-      const code1 =
-        data?.data?.firstMobility?.[0]?.departureDong?.adminDongCode;
-      const code2 =
-        data?.data?.secondMobility?.[0]?.departureDong?.adminDongCode;
-      return code1 && code2 ? [code1, code2] : null;
-    } catch {
+      if (inputType === "option1") {
+        const res = await fetch(
+          `https://padong.site/mobility/address?address=${encodeURIComponent(
+            address1
+          )}`
+        );
+        const data = await res.json();
+        return data?.data?.[0]?.departureDong?.adminDongCode ?? null;
+      } else if (inputType === "option2" && address2) {
+        const [res1, res2] = await Promise.all([
+          fetch(
+            `https://padong.site/mobility/address?address=${encodeURIComponent(
+              address1
+            )}`
+          ),
+          fetch(
+            `https://padong.site/mobility/address?address=${encodeURIComponent(
+              address2
+            )}`
+          ),
+        ]);
+
+        const data1 = await res1.json();
+        const data2 = await res2.json();
+
+        const code1 = data1?.data?.[0]?.departureDong?.adminDongCode ?? null;
+        const code2 = data2?.data?.[0]?.departureDong?.adminDongCode ?? null;
+
+        return code1 && code2 ? [code1, code2] : null;
+      }
+      return null;
+    } catch (err) {
+      console.error("행정동 코드 요청 실패:", err);
       return null;
     }
   };
 
   const handleSelect = async (dongName: string, index: number = 0) => {
-    const dongCode = await fetchSingleAdminDongCode(dongName);
-    if (!dongCode) return;
+    // option1일 경우 dongName만 전달하고, option2일 경우에도 dongName 하나만 전달
+    const result = await fetchAdminDongCode(inputType, dongName);
 
-    if (inputType === "option1") {
-      setSingleDestination({ dongName, dongCode });
-    } else {
-      setMultiDestination(index, { dongName, dongCode });
+    // 실패 케이스: null이거나, option2인데 반환값이 string인 경우 (의도된 에러 처리)
+    if (!result || (inputType === "option2" && Array.isArray(result))) return;
+
+    // option1인 경우: string 반환
+    if (inputType === "option1" && typeof result === "string") {
+      setSingleDestination({ dongName, dongCode: result });
+    }
+
+    // option2인 경우: string 반환 (각각 따로 호출했기 때문에 배열 아님!)
+    else if (inputType === "option2" && typeof result === "string") {
+      setMultiDestination(index, { dongName, dongCode: result });
     }
 
     clear();
+  };
+
+  const handleMultiSelect = (selected: string, idx: number) => {
+    setMultiDestination(idx, { dongName: selected, dongCode: "" });
+    clearSuggestions(idx); // 선택 후 해당 인덱스만 리스트 닫기
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -94,10 +161,8 @@ const SearchBar = () => {
       const dongName = singleDestination.dongName;
       const code =
         singleDestination.dongCode ||
-        (await fetchSingleAdminDongCode(dongName));
-      if (!code) return alert("행정동 코드를 찾을 수 없습니다.");
-
-      const _boundary = await fetchBoundary(code);
+        (await fetchAdminDongCode(inputType, dongName));
+      if (!code) return alert("행정동 리스트에서 선택해주세요");
 
       const recommendations = await fetchRecommendations(dongName);
       setRecommendations(recommendations); // zustand store에 저장
@@ -105,19 +170,23 @@ const SearchBar = () => {
       navigate("/search");
     } else {
       const [addr1, addr2] = multiDestinations.map((d) => d.dongName);
-      const codes = await fetchMultiAdminDongCodes(addr1, addr2);
-      if (!codes) return alert("두 개의 행정동 코드를 찾을 수 없습니다.");
+      const codes = await fetchAdminDongCode(inputType, addr1, addr2);
+      if (!codes) return alert("행정동 리스트에서 선택해주세요");
+      const [code1, code2] = Array.isArray(codes) ? codes : [codes, codes];
+      setMultiDestination(0, { dongName: addr1, dongCode: code1 });
+      setMultiDestination(1, { dongName: addr2, dongCode: code2 });
 
-      const [_b1, _b2] = await Promise.all([
-        fetchBoundary(codes[0]),
-        fetchBoundary(codes[1]),
-      ]);
+      console.log("저장된 multiAddress1:", multiAddress1);
+      console.log("저장된 multiAddress2:", multiAddress2);
+      if (!codes) return alert("행정동 리스트에서 선택해주세요");
 
-      // 추천은 첫 번째 목적지 기준으로 받아오기
-      const recommendations = await fetchRecommendations(addr1);
-      setRecommendations(recommendations);
+      const recommendations = await fetchRecommendationsMulti(addr1, addr2);
 
-      navigate("/search");
+      setFirstMobility(recommendations.firstMobility);
+      setSecondMobility(recommendations.secondMobility);
+      setIntersectedMobility(recommendations.intersectedMobility);
+
+      navigate("/search-multi");
     }
   };
 
@@ -186,8 +255,7 @@ const SearchBar = () => {
               <input
                 type="text"
                 value={multiDestinations[idx].dongName}
-                onChange={(e) => handleInputChange(idx, e.target.value)}
-                onKeyDown={handleKeyPress}
+                onChange={(e) => handleMultiInputChange(idx, e.target.value)}
                 placeholder="목적지(출근지,회사 등)의 지역명을 검색해보세요"
                 className="w-full pr-10 pl-4 py-2.5 indent-14 text-sm border border-[#2e58e4] rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -195,12 +263,12 @@ const SearchBar = () => {
                 출근지 {idx + 1}
               </span>
 
-              {suggestions.length > 0 && (
+              {multiSuggestions[idx].length > 0 && (
                 <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto">
-                  {suggestions.map((item, sIdx) => (
+                  {multiSuggestions[idx].map((item, sIdx) => (
                     <li
                       key={sIdx}
-                      onClick={() => handleSelect(item, idx)}
+                      onClick={() => handleMultiSelect(item, idx)}
                       className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
                     >
                       {item}

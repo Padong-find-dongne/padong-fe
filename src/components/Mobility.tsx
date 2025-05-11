@@ -21,6 +21,7 @@ type Itinerary = {
   totalTime: number;
   totalWalkTime?: number;
   legs: Leg[];
+  totalDistance: number;
 };
 const Mobility = ({ start, end }: MobilityProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -28,7 +29,11 @@ const Mobility = ({ start, end }: MobilityProps) => {
   const [walkOnlyTime, setWalkOnlyTime] = useState<number | null>(null);
   const appKey = import.meta.env.VITE_TMAP_APP_KEY;
   const { multiDestinations, singleDestination } = useSearchStore();
-  const arrivalName = singleDestination.dongName;
+  //동이 들어간 단어만 필터링
+  const arrivalName =
+    singleDestination.dongName.split(" ").find((word) => word.includes("동")) ||
+    singleDestination.dongName;
+
   const getRoute = async () => {
     if (!start || !end) {
       setErrorMessage("출발지 또는 도착지 좌표가 유효하지 않습니다.");
@@ -98,61 +103,60 @@ const Mobility = ({ start, end }: MobilityProps) => {
     getRoute();
   }, [start, end]);
 
-  const busTime = (route?.totalTime || 0) - (route?.totalWalkTime || 0);
+  const busTime = (
+    ((route?.totalTime || 0) - (route?.totalWalkTime || 0)) /
+    60
+  ).toFixed(1);
 
   return (
-    <div className="p-4 bg-gray-100 rounded-xl text-sm mt-5">
+    <div className="mt-7">
+      <p className="text-lg font-semibold text-[#585858]">• 대중교통</p>
       {errorMessage ? (
         <p className="text-red-600">{errorMessage}</p>
       ) : route ? (
-        <div>
-          <div className="flex justify-between">
-            <p className="text-md font-semibold text-[#585858]">소요 시간</p>
-            <p className="text-md text-[#585858]">
-              {(route.totalTime / 60).toFixed(1)} 분
-            </p>
-            <p className="text-md font-semibold text-[#585858]">거리</p>
-            <p className="text-md text-[#585858]">
-              {route.legs.reduce(
-                (sum: number, leg: Leg) => sum + (leg.distance || 0),
-                0
-              )}{" "}
-              m
-            </p>
-          </div>
-
-          <p className="text-md font-semibold text-[#585858]">대중교통</p>
-
-          <div className="flex justify-between">
-            <div className="flex flex-col">
-              <img
-                src="/images/bus.png"
-                alt="버스"
-                className="w-4 h-4 inline"
-              />
-              <span>{busTime}</span>
+        <div className="p-10 bg-gray-100 rounded-xl text-sm mt-5">
+          <div className="flex space-x-5">
+            <div className="flex space-x-3">
+              <p className="text-lg font-semibold text-[#585858]">소요시간</p>
+              <p className="text-lg text-[#585858]">
+                {(route.totalTime / 60).toFixed(1)} 분
+              </p>
             </div>
-            <div className="flex flex-col">
+            <div className="flex space-x-3">
+              <p className="text-lg font-semibold ml-6 text-[#585858]">거리</p>
+              <p className="text-lg text-[#585858]">
+                {(route.totalDistance / 1000).toFixed(1)}km
+              </p>
+            </div>
+          </div>
+          {/*루트 상세 정보*/}
+          <div className="relative pt-7 flex items-center justify-between">
+            <div className="flex flex-col items-center z-10 ">
+              <img src="/images/bus.png" alt="버스" className="w-15 h-15" />
+              <div className="text-[#585858]">{busTime}분</div>
+            </div>
+            <div className="flex items-center flex-col z-10">
               <img
                 src="/images/walk-icon.png"
                 alt="지하철"
-                className="w-4 h-4 inline"
+                className="w-15 h-15"
               />
-              <span className="font-semibold">
+              <div className="text-[#585858]">
                 {(route.totalWalkTime ? route.totalWalkTime / 60 : 0).toFixed(
                   1
                 )}
                 분
-              </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span>{arrivalName}</span>
+            <div className="flex flex-col items-center  z-10 ">
               <img
-                src="/images/arrival.png"
+                src="/images/arrive.png"
                 alt="목적지"
-                className="w-4 h-4 inline"
+                className="w-15 h-15"
               />
+              <div className="text-[#585858]">{arrivalName}</div>
             </div>
+            <hr className="absolute top-1/2 left-0 right-0 h-px bg z-0 text-[#DADADA]" />
           </div>
         </div>
       ) : (

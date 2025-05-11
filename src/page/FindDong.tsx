@@ -179,13 +179,13 @@ const FindDong = () => {
                   </span>
                   <span className="text-[22px] text-[#585858] text-left">
                     {item.avgMonthlyDeposit.toLocaleString()}/
-                    {item.avgMonthlyRent.toLocaleString()}
+                    {item.avgMonthlyRent.toLocaleString()} 만원
                   </span>
                   <span className="ml-5 font-bold text-[22px] text-[#585858]">
                     전 세
                   </span>
                   <span className="text-left text-[22px] text-[#585858]">
-                    {item.avgJeonseDeposit.toLocaleString()}
+                    {item.avgJeonseDeposit.toLocaleString()} 만원
                   </span>
                 </div>
 

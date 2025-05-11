@@ -3,6 +3,7 @@ import { useSearchStore } from "../store/SearchStore";
 import axios from "axios";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Mobility from "../components/Mobility";
 import DongDetailMap from "../components/DongDetailMap";
 type RentPrice = {
@@ -32,42 +33,34 @@ type DongDetailData = {
   location: DongLocation[];
 };
 const FindDong = () => {
-  const {
-    selectedRecommendation,
-    firstMobility,
-    secondMobility,
-    intersectedMobility,
-    multiAddress1,
-    setMultiAddress2,
-    singleDestination,
-  } = useSearchStore();
+  const { selectedRecommendation, multiAddress1, multiAddress2 } =
+    useSearchStore();
   const [dongDetail, setDongDetail] = useState<DongDetailData | null>(null);
-  const departureCode = singleDestination.dongCode;
-  const arrivalCode = selectedRecommendation?.departureDong.adminDongCode || "";
 
   const [location, setLocation] = useState<DongLocation[]>([]);
+
+  // URL 쿼리 파라미터를 읽어옴
+  const [searchParams] = useSearchParams();
+  const arrivalCode = searchParams.get("arrivalCode");
+  const departureCode = searchParams.get("departureCode");
   useEffect(() => {
-    const fetchDongDetail = async (
-      arrivalCode: string,
-      departureCode: string
-    ) => {
-      try {
-        const res = await axios.get(
-          `https://padong.site/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
-        );
-        const data = res.data?.data;
-        setDongDetail(data ?? null);
-        setLocation(data?.location ?? []);
-      } catch (e) {
-        console.error("추천 요청 실패:", e);
+    const fetchDongDetail = async () => {
+      if (arrivalCode && departureCode) {
+        try {
+          const res = await axios.get(
+            `https://padong.site/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
+          );
+          const data = res.data?.data;
+          setDongDetail(data ?? null);
+          setLocation(data?.location ?? []);
+        } catch (e) {
+          console.error("추천 요청 실패:", e);
+        }
       }
     };
 
-    if (arrivalCode && departureCode) {
-      fetchDongDetail(arrivalCode, departureCode);
-    }
+    fetchDongDetail();
   }, [arrivalCode, departureCode]);
-
   if (!dongDetail) return <div>로딩 중...</div>;
 
   const departureLocation = location.find((loc) => loc.type === "departure");
@@ -82,9 +75,7 @@ const FindDong = () => {
             <div className="p-2 w-full max-w-md border rounded-lg border-[#3356CC] border-2">
               <span className="font-[600] mr-2">출근지</span>
               <span className="text-lg text-[#818181] mb-0.3 mr-5">|</span>
-              <span className="text-[#818181]">
-                {selectedRecommendation?.departureDong.address}
-              </span>
+              <span className="text-[#818181]">{arrivalLocation?.address}</span>
             </div>
             <div className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold flex flex-col mt-2">
               <span className="text-[#4A6CDF] mt-5">

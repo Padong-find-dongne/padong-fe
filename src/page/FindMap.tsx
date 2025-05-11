@@ -6,15 +6,12 @@ import Header from "../components/Header";
 import "../styles/Media.css";
 import type { Recommendation } from "../store/SearchStore";
 import axios from "axios";
-import MultiMap from "../components/MultiMap";
+
 const FindMap = () => {
   const {
     recommendations,
     setSelectedRecommendation,
     singleDestination,
-    multiAddress1,
-    multiAddress2,
-    inputType,
     setBoundaryData,
   } = useSearchStore();
 

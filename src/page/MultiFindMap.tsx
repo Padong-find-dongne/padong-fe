@@ -8,21 +8,9 @@ import type { Recommendation } from "../store/SearchStore";
 import axios from "axios";
 
 type MobilityType = "firstMobility" | "secondMobility" | "intersectedMobility";
-type IntersectedDongInfo = {
-  departureDong: {
-    adminDongCode: string;
-    address: string;
-  };
-  totalMobility1: number;
-  totalMobility2: number;
-  avgTime1: number;
-  avgTime2: number;
-};
 
 const MultiFindMap = () => {
   const {
-    recommendations = [],
-    setSelectedRecommendation,
     firstMobility,
     secondMobility,
     intersectedMobility,
@@ -35,10 +23,31 @@ const MultiFindMap = () => {
   const [selectedType, setSelectedType] =
     useState<MobilityType>("firstMobility");
 
-  const handleDong = (data: Recommendation) => () => {
-    setSelectedRecommendation(data);
-    navigate("/detail-dong");
+  const handleDong = (dong: Recommendation) => () => {
+    let departureCode = "";
+    if (selectedType === "firstMobility") {
+      departureCode = multiAddress1?.dongCode || "";
+    } else if (selectedType === "secondMobility") {
+      departureCode = multiAddress2?.dongCode || "";
+    } else if (selectedType === "intersectedMobility") {
+      // 교집합일 때도 첫 번째 목적지를 기준으로 출발 코드 설정
+      departureCode = multiAddress1?.dongCode || "";
+    }
+
+    const arrivalCode = dong.departureDong.adminDongCode;
+
+    navigate(
+      `/multi/detail-dong?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
+    );
   };
+
+  // 선택된 추천 리스트
+  const selectedRecommendations: Recommendation[] =
+    selectedType === "firstMobility"
+      ? firstMobility
+      : selectedType === "secondMobility"
+      ? secondMobility
+      : intersectedMobility; // 교차일 때도 동일한 UI로 처리
 
   // 행정동 경계 데이터를 가져오는 함수
   const fetchBoundaries = async (dongCodes: string[]) => {
@@ -59,27 +68,10 @@ const MultiFindMap = () => {
   };
 
   useEffect(() => {
-    let selectedList;
-
-    if (selectedType === "firstMobility") {
-      selectedList = firstMobility;
-    } else if (selectedType === "secondMobility") {
-      selectedList = secondMobility;
-    } else {
-      selectedList = intersectedMobility;
-    }
-
-    const dongCodes =
-      selectedType === "intersectedMobility"
-        ? (selectedList as IntersectedDongInfo[]).map(
-            (dong) => dong.departureDong.adminDongCode
-          )
-        : (selectedList as Recommendation[]).map(
-            (dong) => dong.departureDong.adminDongCode
-          );
-
+    const dongCodes = selectedRecommendations.map(
+      (dong) => dong.departureDong.adminDongCode
+    );
     console.log(`[${selectedType}]에서 가져온 동 코드 목록:`, dongCodes);
-
     fetchBoundaries(dongCodes);
   }, [selectedType, firstMobility, secondMobility, intersectedMobility]);
 
@@ -138,17 +130,19 @@ const MultiFindMap = () => {
             </button>
           </div>
 
-          <div className="mt-6 h-[700px] overflow-y-auto">
-            {recommendations.length > 0 ? (
-              recommendations.map((rec) => (
+          <div className="mt-6 h-[700px] overflow-y-auto ">
+            {Array.isArray(selectedRecommendations) &&
+            selectedRecommendations.length > 0 ? (
+              selectedRecommendations.map((rec) => (
                 <div
-                  className="mb-6 cursor-pointer"
+                  className="mb-15 mt-3 cursor-pointer"
                   key={rec.departureDong.adminDongCode}
                   onClick={handleDong(rec)}
                 >
                   <p className="text-[#3D3D3D] font-bold text-[20px]">
                     {rec.departureDong.address}
                   </p>
+
                   <div className="score mt-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="flex col-span-2">

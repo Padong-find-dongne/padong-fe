@@ -16,6 +16,10 @@ export type Recommendation = {
   avgJeonseDeposit: number;
   avgMonthlyDeposit: number;
   avgMonthlyRent: number;
+  totalMobility1?: number;
+  totalMobility2?: number;
+  avgTime1?: number;
+  avgTime2?: number;
 };
 
 type Destination = {
@@ -23,14 +27,6 @@ type Destination = {
   dongCode: string;
 };
 
-//교차 행정동
-type IntersectedDongInfo = {
-  departureDong: DepartureDong;
-  totalMobility1: number;
-  totalMobility2: number;
-  avgTime1: number;
-  avgTime2: number;
-};
 type InputType = "option1" | "option2";
 
 interface SearchState {
@@ -57,12 +53,12 @@ interface SearchState {
   setFirstMobility: (data: Recommendation[]) => void;
   secondMobility: Recommendation[];
   setSecondMobility: (data: Recommendation[]) => void;
-  intersectedMobility: IntersectedDongInfo[];
-  setIntersectedMobility: (data: IntersectedDongInfo[]) => void;
+  intersectedMobility: Recommendation[];
+  setIntersectedMobility: (data: Recommendation[]) => void;
   setMobilityData: (data: {
     firstMobility: Recommendation[];
     secondMobility: Recommendation[];
-    intersectedMobility: IntersectedDongInfo[];
+    intersectedMobility: Recommendation[];
   }) => void;
 }
 

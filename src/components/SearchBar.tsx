@@ -65,7 +65,7 @@ const SearchBar = () => {
       const res = await axios.get(
         `https://padong.site/mobility/address/multi?address1=${encodeURIComponent(
           address1
-        )}&address2=${encodeURIComponent(address2)}&page=1`
+        )}&address2=${encodeURIComponent(address2)}&page=2`
       );
       return res.data?.data ?? [];
     } catch (e) {
@@ -184,6 +184,8 @@ const SearchBar = () => {
 
       setFirstMobility(recommendations.firstMobility);
       setSecondMobility(recommendations.secondMobility);
+      console.log(recommendations.firstMobility);
+      console.log(recommendations.secondMobility);
       setIntersectedMobility(recommendations.intersectedMobility);
 
       navigate("/search-multi");

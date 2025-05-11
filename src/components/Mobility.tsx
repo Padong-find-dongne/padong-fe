@@ -10,17 +10,11 @@ type MobilityProps = {
   start: Coord;
   end: Coord;
 };
-// Leg 타입 정의
-type Leg = {
-  mode: "WALK" | "BUS" | "SUBWAY";
-  sectionTime: number;
-  distance?: number;
-};
+
 // API 응답에서 사용할 주요 타입 정의
 type Itinerary = {
   totalTime: number;
   totalWalkTime?: number;
-  legs: Leg[];
   totalDistance: number;
 };
 const Mobility = ({ start, end }: MobilityProps) => {
@@ -29,7 +23,8 @@ const Mobility = ({ start, end }: MobilityProps) => {
   const [walkOnlyTime, setWalkOnlyTime] = useState<number | null>(null);
   const [carOnlyTime, setCarOnlyTime] = useState<number | null>(null);
   const appKey = import.meta.env.VITE_TMAP_APP_KEY;
-  const { multiDestinations, singleDestination } = useSearchStore();
+  [];
+  const { multiAddress1, multiAddress2, singleDestination } = useSearchStore();
   //동이 들어간 단어만 필터링
   const arrivalName =
     singleDestination.dongName.split(" ").find((word) => word.includes("동")) ||
@@ -86,14 +81,6 @@ const Mobility = ({ start, end }: MobilityProps) => {
       }
 
       setRoute(itinerary);
-
-      //거리로  차량 이동 시간 계산
-      const carTime = (route?.totalDistance ?? 0) / 500;
-      setCarOnlyTime(carTime);
-
-      //거리로 도보 시간 계산
-      const estimatedWalkTime = (route?.totalDistance ?? 0) / 83.33;
-      setWalkOnlyTime(estimatedWalkTime);
     } catch (err) {
       console.error("Tmap API 요청 실패:", err);
       setErrorMessage("Tmap API 요청 중 오류가 발생했습니다.");
@@ -175,7 +162,7 @@ const Mobility = ({ start, end }: MobilityProps) => {
                     className="w-15 h-15"
                   />
                   <div className="text-[#585858]">
-                    {carOnlyTime?.toFixed(1)}분
+                    {(route?.totalDistance / 500).toFixed(1)}분
                   </div>
                 </div>
                 <div className="flex items-center flex-col z-10">
@@ -202,7 +189,7 @@ const Mobility = ({ start, end }: MobilityProps) => {
                     className="w-15 h-15"
                   />
                   <div className="text-[#585858]">
-                    {walkOnlyTime?.toFixed(1)}분
+                    {(route?.totalDistance / 83.33).toFixed(1)}분
                   </div>
                 </div>
                 <div className="flex items-center flex-col z-10">

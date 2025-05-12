@@ -62,11 +62,14 @@ const SearchBar = () => {
     address1: string,
     address2: string
   ) => {
+    console.log("address1:", address1);
+
+    console.log("address2:", address2);
     try {
       const res = await axios.get(
         `https://padong.site/mobility/address/multi?address1=${encodeURIComponent(
           address1
-        )}&address2=${encodeURIComponent(address2)}&page=2`
+        )}&address2=${encodeURIComponent(address2)}&page=0`
       );
       return res.data?.data ?? [];
     } catch (e) {

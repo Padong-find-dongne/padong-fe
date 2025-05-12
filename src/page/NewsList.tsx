@@ -4,6 +4,7 @@ import { useNewsStore } from "../store/newsStore";
 import Header from "../components/Header";
 const NewsList = () => {
   const { youthHousingNews, housingPriceNews, fetchAllNews } = useNewsStore();
+
   useEffect(() => {
     fetchAllNews();
   }, []);
@@ -38,12 +39,12 @@ const NewsList = () => {
 
           <div className="flex overflow-x-auto scroll-pl-6 snap-x">
             <div className="flex w-max space-x-4">
-              {housingPriceNews.map((news, index) => (
+              {housingPriceNews.map((news) => (
                 <div
-                  key={index}
+                  key={news.originallink}
                   className="snap-start shrink-0 w-[calc(25%-1rem)] min-w-[100px]"
                 >
-                  <NewsCard {...news} />
+                  <NewsCard key={news.originallink} {...news} />
                 </div>
               ))}
             </div>

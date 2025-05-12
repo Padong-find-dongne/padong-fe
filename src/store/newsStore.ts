@@ -28,8 +28,8 @@ export const useNewsStore = create<NewsStore>((set) => ({
         items.map((item) => ({
           newsTitle: item.title,
           newsSummary: item.description,
-          originallink: item.originallink,
           newsImage: item.thumbnail,
+          originallink: item.originallink,
         }));
 
       set({

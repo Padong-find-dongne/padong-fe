@@ -79,7 +79,7 @@ const FindDong = () => {
             </div>
             <div className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold flex flex-col mt-2">
               <span className="text-[#4A6CDF] mt-5">
-                {selectedRecommendation?.departureDong.address}
+                {arrivalLocation?.address}
               </span>
               <span className="mt-5 mb-5">상세 정보</span>
             </div>

@@ -1,26 +1,18 @@
 import React from "react";
-
+import { useNewsStore } from "../store/newsStore";
 interface NewsCardProps {
   newsTitle: string;
   newsSummary: string;
   newsImage: string;
-  originallink: string;
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
   newsTitle,
   newsSummary,
   newsImage,
-  originallink,
 }) => {
-  const handleNewsLink = () => {
-    window.open(originallink, "_blank");
-  };
   return (
-    <div
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-      onClick={handleNewsLink}
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div className="p-4 rounded">
         <img
           src={newsImage}

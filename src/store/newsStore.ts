@@ -29,7 +29,7 @@ export const useNewsStore = create<NewsStore>((set) => ({
           newsTitle: item.title,
           newsSummary: item.description,
           newsImage: item.thumbnail,
-          originallink: item.originallink,
+          originallink: item.originallink || "", // 없으면 빈 문자열로 설정
         }));
 
       set({

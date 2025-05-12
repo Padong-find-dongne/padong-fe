@@ -73,7 +73,13 @@ const Main: React.FC = () => {
               ...youthHousingNews.slice(0, 2),
               ...housingPriceNews.slice(0, 2),
             ].map((item, index) => (
-              <NewsCard key={index} {...item} />
+              <NewsCard
+                key={index}
+                newsTitle={item.newsTitle}
+                newsSummary={item.newsSummary}
+                newsImage={item.newsImage}
+                originallink={item.originallink}
+              />
             ))}
           </div>
         )}

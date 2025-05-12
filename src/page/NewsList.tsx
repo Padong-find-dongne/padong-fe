@@ -25,12 +25,7 @@ const NewsList = () => {
                 key={index}
                 className="snap-start shrink-0 w-[calc(25%-1rem)] min-w-[100px]"
               >
-                <NewsCard
-                  newsTitle={news.newsTitle || "제목 없음"}
-                  newsSummary={news.newsSummary || "내용 없음"}
-                  newsImage={news.newsImage || "/images/padong-icon.png"}
-                  originallink={news.originallink || "#"}
-                />
+                <NewsCard {...news} />
               </div>
             ))}
           </div>

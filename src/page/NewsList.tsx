@@ -21,7 +21,7 @@ const NewsList = () => {
         </div>
         <div className="flex overflow-x-auto scroll-pl-6 snap-x ">
           <div className="flex w-max space-x-4">
-            {youthHousingNews.map((news, index) => (
+            {youthHousingNews.map((news) => (
               <div
                 key={news.originallink}
                 className="snap-start shrink-0 w-[calc(25%-1rem)] min-w-[100px]"

@@ -1,7 +1,9 @@
 import React from "react";
 import type { NewsItem } from "../store/newsStore";
 
-const NewsCard: React.FC<NewsItem> = ({
+interface NewsCardProps extends NewsItem {}
+
+const NewsCard: React.FC<NewsCardProps> = ({
   newsTitle,
   newsSummary,
   newsImage,
@@ -10,6 +12,7 @@ const NewsCard: React.FC<NewsItem> = ({
   const handleNewsClick = () => {
     window.open(originallink, "_blank");
   };
+
   return (
     <div
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"

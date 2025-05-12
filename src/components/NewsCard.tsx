@@ -15,7 +15,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
 
   return (
     <div
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 cursor-pointer"
       onClick={handleNewsClick}
     >
       <div className="p-4 rounded">

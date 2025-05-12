@@ -32,15 +32,7 @@ type DongDetailData = {
   location: DongLocation[];
 };
 const FindDong = () => {
-  const {
-    selectedRecommendation,
-    firstMobility,
-    secondMobility,
-    intersectedMobility,
-    multiAddress1,
-    setMultiAddress2,
-    singleDestination,
-  } = useSearchStore();
+  const { selectedRecommendation, singleDestination } = useSearchStore();
   const [dongDetail, setDongDetail] = useState<DongDetailData | null>(null);
   const departureCode = singleDestination.dongCode;
   const arrivalCode = selectedRecommendation?.departureDong.adminDongCode || "";
@@ -56,6 +48,7 @@ const FindDong = () => {
           `https://padong.site/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
         );
         const data = res.data?.data;
+        console.log("도착지 상세 정보:", data);
         setDongDetail(data ?? null);
         setLocation(data?.location ?? []);
       } catch (e) {

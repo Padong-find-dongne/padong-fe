@@ -25,7 +25,7 @@ const Main: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       await fetchAllNews();
-      setIsLoading(false); // 데이터 로딩 완료 후 로딩 상태 false
+      setIsLoading(false);
     };
     loadData();
   }, [fetchAllNews]);
@@ -62,14 +62,17 @@ const Main: React.FC = () => {
               주택 정보 및 뉴스를 확인하세요.
             </span>
           </div>
-          <span onClick={handleNewsClick} className="text-[#6D6D6D]">
+          <span
+            onClick={handleNewsClick}
+            className="text-[#6D6D6D] cursor-pointer"
+          >
             더보기
           </span>
         </div>
         {isLoading ? (
           <LoadingSpinner loadingMent="뉴스를 불러오는 중입니다" />
         ) : (
-          <div className="news-grid mt-10 grid grid-cols-4 gap-4">
+          <div className="news-grid mt-10 grid grid-cols-4 gap-4 ">
             {[
               ...youthHousingNews.slice(0, 2),
               ...housingPriceNews.slice(0, 2),

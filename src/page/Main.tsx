@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useNewsStore } from "../store/newsStore";
 import "../styles/Media.css";
 import { BiSolidQuoteLeft } from "react-icons/bi";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Main: React.FC = () => {
   const { youthHousingNews, housingPriceNews, fetchAllNews } = useNewsStore();
@@ -17,11 +18,17 @@ const Main: React.FC = () => {
   const handleNewsClick = () => {
     navigate("/news-list");
   };
+  const [isLoading, setIsLoading] = React.useState(true);
   //뉴스 렌더링
-  useEffect(() => {
-    fetchAllNews();
-  }, []);
 
+  // 뉴스 렌더링
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchAllNews();
+      setIsLoading(false); // 데이터 로딩 완료 후 로딩 상태 false
+    };
+    loadData();
+  }, [fetchAllNews]);
   return (
     <div className="mb-20">
       <Header />
@@ -58,14 +65,18 @@ const Main: React.FC = () => {
             더보기
           </span>
         </div>
-        <div className="news-grid mt-10 grid grid-cols-4 gap-4">
-          {[
-            ...youthHousingNews.slice(0, 2),
-            ...housingPriceNews.slice(0, 2),
-          ].map((item, index) => (
-            <NewsCard key={index} {...item} />
-          ))}
-        </div>
+        {isLoading ? (
+          <LoadingSpinner loadingMent="뉴스를 불러오는 중입니다" />
+        ) : (
+          <div className="news-grid mt-10 grid grid-cols-4 gap-4">
+            {[
+              ...youthHousingNews.slice(0, 2),
+              ...housingPriceNews.slice(0, 2),
+            ].map((item, index) => (
+              <NewsCard key={index} {...item} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

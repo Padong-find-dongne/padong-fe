@@ -4,7 +4,8 @@ import { GrSearch } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useMultiAutoStore } from "../store/MultiAutoStore";
-
+import React, { useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 const SearchBar = () => {
   const {
     inputType,
@@ -22,7 +23,7 @@ const SearchBar = () => {
   } = useSearchStore();
 
   const { suggestions, setQuery, fetchSuggestions, clear } = useAutoStore();
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     multiSuggestions,
     setMultiQuery,
@@ -157,6 +158,7 @@ const SearchBar = () => {
     }
   };
   const handleNext = async () => {
+    setIsLoading(true);
     if (inputType === "option1") {
       const dongName = singleDestination.dongName;
       const code =
@@ -193,7 +195,7 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="relative flex flex-col items-center space-y-4">
       <div className="flex my-0 space-x-15">
         <button
           className={`px-9 py-1 rounded-t-2xl ${
@@ -286,6 +288,11 @@ const SearchBar = () => {
           </div>
         </div>
       )}
+      <div className="absolute w-100 flex flex-col items-center mt-5">
+        {isLoading && (
+          <LoadingSpinner loadingMent="추천 행정동을 검색하고 있어요" />
+        )}
+      </div>
     </div>
   );
 };

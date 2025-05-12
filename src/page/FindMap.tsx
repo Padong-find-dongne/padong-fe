@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchStore } from "../store/SearchStore";
 import SeoulMap from "../components/SeoulMap";
 import Header from "../components/Header";
 import "../styles/Media.css";
 import type { Recommendation } from "../store/SearchStore";
+import LoadingSpinner from "../components/LoadingSpinner";
 import axios from "axios";
 
 const FindMap = () => {
@@ -29,14 +30,13 @@ const FindMap = () => {
   useEffect(() => {
     const fetchBoundaries = async () => {
       const codes = recommendations.map((r) => r.departureDong.adminDongCode);
-
       const allData: BoundaryMap = {};
 
       await Promise.all(
         codes.map(async (code) => {
           try {
             const res = await axios.get(`https://padong.site/boundary/${code}`);
-            allData[code] = res.data.data; // { points: [...] }
+            allData[code] = res.data.data;
           } catch (e) {
             console.error(`${code} boundary 요청 실패`, e);
           }
@@ -52,6 +52,7 @@ const FindMap = () => {
   return (
     <div>
       <Header />
+
       <div className="mt-5 ml-10 mr-10 flex flex-row space-x-10">
         <aside className="basis-1/2 w-100 flex flex-col ">
           <div>

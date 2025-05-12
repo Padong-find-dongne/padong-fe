@@ -9,7 +9,7 @@ const UseGuide = () => {
           파동 <span className="text-[#333333]">이용가이드</span>
         </span>
 
-        <img className="h-600" src={guide} alt="파동 이용 가이드" />
+        <img className="h-600" src="/images/guide.png" alt="파동 이용 가이드" />
       </div>
     </div>
   );

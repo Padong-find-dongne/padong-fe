@@ -166,7 +166,7 @@ const FindDong = () => {
               <div className="mt-10" key={idx}>
                 <div className="flex items-center space-x-8">
                   <img
-                    className="w-[5vw] h-auto"
+                    className="w-15 h-auto"
                     src={imagePath}
                     alt={buildingText}
                   />

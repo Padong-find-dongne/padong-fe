@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import NewsCard from "../components/NewsCard";
 import { useNewsStore } from "../store/newsStore";
 import Header from "../components/Header";
+import type { NewsItem } from "../store/newsStore";
+
 const NewsList = () => {
   const { youthHousingNews, housingPriceNews, fetchAllNews } = useNewsStore();
 
@@ -21,7 +23,7 @@ const NewsList = () => {
         </div>
         <div className="flex overflow-x-auto scroll-pl-6 snap-x ">
           <div className="flex w-max space-x-4">
-            {youthHousingNews.map((news) => (
+            {youthHousingNews.map((news: NewsItem) => (
               <div
                 key={news.originallink}
                 className="snap-start shrink-0 w-[calc(25%-1rem)] min-w-[100px]"
@@ -39,7 +41,7 @@ const NewsList = () => {
 
           <div className="flex overflow-x-auto scroll-pl-6 snap-x">
             <div className="flex w-max space-x-4">
-              {housingPriceNews.map((news) => (
+              {housingPriceNews.map((news: NewsItem) => (
                 <div
                   key={news.originallink}
                   className="snap-start shrink-0 w-[calc(25%-1rem)] min-w-[100px]"

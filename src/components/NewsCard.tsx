@@ -1,13 +1,7 @@
 import React from "react";
+import type { NewsItem } from "../store/newsStore";
 
-interface NewsCardProps {
-  newsTitle: string;
-  newsSummary: string;
-  newsImage: string;
-  originallink: string;
-}
-
-const NewsCard: React.FC<NewsCardProps> = ({
+const NewsCard: React.FC<NewsItem> = ({
   newsTitle,
   newsSummary,
   newsImage,

@@ -29,10 +29,7 @@ const Main: React.FC = () => {
     };
     loadData();
   }, [fetchAllNews]);
-  useEffect(() => {
-    console.log("청년 주택 뉴스:", youthHousingNews);
-    console.log("주택 가격 뉴스:", housingPriceNews);
-  }, [youthHousingNews, housingPriceNews]);
+
   return (
     <div className="mb-20">
       <Header />

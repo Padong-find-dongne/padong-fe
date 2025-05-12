@@ -28,7 +28,7 @@ const NewsList = () => {
                 key={news.originallink}
                 className="snap-start shrink-0 w-[calc(25%-1rem)] min-w-[100px]"
               >
-                <NewsCard key={news.originallink} {...news} />
+                <NewsCard {...news} />
               </div>
             ))}
           </div>
@@ -46,7 +46,7 @@ const NewsList = () => {
                   key={news.originallink}
                   className="snap-start shrink-0 w-[calc(25%-1rem)] min-w-[100px]"
                 >
-                  <NewsCard key={news.originallink} {...news} />
+                  <NewsCard {...news} />
                 </div>
               ))}
             </div>

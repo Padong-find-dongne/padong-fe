@@ -211,6 +211,7 @@ const FindDong = () => {
                     lat: arrivalLocation.lat,
                     lng: arrivalLocation.lng,
                   }}
+                  arrivalName={selectedRecommendation?.departureDong.address}
                 />
               </>
             )}

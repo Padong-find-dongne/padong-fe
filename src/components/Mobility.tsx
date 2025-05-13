@@ -9,6 +9,7 @@ type Coord = {
 type MobilityProps = {
   start: Coord;
   end: Coord;
+  arrivalName: string;
 };
 
 // API 응답에서 사용할 주요 타입 정의
@@ -17,16 +18,12 @@ type Itinerary = {
   totalWalkTime?: number;
   totalDistance: number;
 };
-const Mobility = ({ start, end }: MobilityProps) => {
+
+const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [route, setRoute] = useState<Itinerary | null>(null);
   const appKey = import.meta.env.VITE_TMAP_APP_KEY;
   [];
-  const { singleDestination } = useSearchStore();
-  //동이 들어간 단어만 필터링
-  const arrivalName =
-    singleDestination.dongName.split(" ").find((word) => word.includes("동")) ||
-    singleDestination.dongName;
 
   const getRoute = async () => {
     if (!start || !end) {

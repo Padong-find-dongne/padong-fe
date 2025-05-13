@@ -80,6 +80,7 @@ export const useSearchStore = create<SearchState>((set) => ({
   setRecommendations: (data) => set({ recommendations: data }),
   selectedRecommendation: null,
   setSelectedRecommendation: (data) => set({ selectedRecommendation: data }),
+  //멀티 인풋 관리
   firstMobility: [],
   setFirstMobility: (data) => set({ firstMobility: data }),
   secondMobility: [],

@@ -209,6 +209,7 @@ const FindDong = () => {
                     lat: arrivalLocation.lat,
                     lng: arrivalLocation.lng,
                   }}
+                  arrivalName={arrivalLocation?.address}
                 />
               </>
             )}

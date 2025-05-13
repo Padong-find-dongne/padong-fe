@@ -24,16 +24,11 @@ const SearchBar = () => {
 
   const { suggestions, setQuery, fetchSuggestions, clear } = useAutoStore();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const {
-    multiSuggestions,
-    setMultiQuery,
-    queries,
-    fetchMultiSuggestions,
-    clearSuggestions,
-  } = useMultiAutoStore();
+  const { multiSuggestions, setMultiQuery, clearSuggestions } =
+    useMultiAutoStore();
 
   const navigate = useNavigate();
-  //멀티 인풋 관리
+  //멀티 인풋 관리s
   const multiDestinations = [multiAddress1, multiAddress2];
   const setMultiDestination = (index: number, destination: any) => {
     if (index === 0) {

@@ -20,11 +20,9 @@ type Itinerary = {
 const Mobility = ({ start, end }: MobilityProps) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [route, setRoute] = useState<Itinerary | null>(null);
-  const [walkOnlyTime, setWalkOnlyTime] = useState<number | null>(null);
-  const [carOnlyTime, setCarOnlyTime] = useState<number | null>(null);
   const appKey = import.meta.env.VITE_TMAP_APP_KEY;
   [];
-  const { multiAddress1, multiAddress2, singleDestination } = useSearchStore();
+  const { singleDestination } = useSearchStore();
   //동이 들어간 단어만 필터링
   const arrivalName =
     singleDestination.dongName.split(" ").find((word) => word.includes("동")) ||

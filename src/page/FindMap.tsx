@@ -5,7 +5,6 @@ import SeoulMap from "../components/SeoulMap";
 import Header from "../components/Header";
 import "../styles/Media.css";
 import type { Recommendation } from "../store/SearchStore";
-import LoadingSpinner from "../components/LoadingSpinner";
 import axios from "axios";
 
 const FindMap = () => {

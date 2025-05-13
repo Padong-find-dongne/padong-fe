@@ -10,8 +10,6 @@ const NewsList = () => {
   useEffect(() => {
     fetchAllNews();
   }, []);
-  console.log("youthHousingNews", youthHousingNews); // 확인을 위한 로그
-  console.log("housingPriceNews", housingPriceNews);
 
   return (
     <div>

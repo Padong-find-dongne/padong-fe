@@ -1,5 +1,5 @@
-import guide from "../../public/images/guide.png";
 import Header from "../components/Header";
+
 const UseGuide = () => {
   return (
     <div>

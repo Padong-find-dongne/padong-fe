@@ -6,8 +6,6 @@ import Header from "../components/Header";
 import "../styles/Media.css";
 import type { Recommendation } from "../store/SearchStore";
 import axios from "axios";
-import LoadingSpinner from "../components/LoadingSpinner";
-type MobilityType = "firstMobility" | "secondMobility" | "intersectedMobility";
 
 const MultiFindMap = () => {
   const {
@@ -16,42 +14,32 @@ const MultiFindMap = () => {
     intersectedMobility,
     multiAddress1,
     multiAddress2,
+    selectedRecommendation,
+    setSelectedRecommendation,
+    setMobilityOption,
     setBoundaryData,
+    moblilityOption,
   } = useSearchStore();
 
   const navigate = useNavigate();
-  const [selectedType, setSelectedType] =
-    useState<MobilityType>("firstMobility");
 
-  const handleDong = (dong: Recommendation) => () => {
-    let departureCode = "";
-    if (selectedType === "firstMobility") {
-      departureCode = multiAddress1?.dongCode || "";
-    } else if (selectedType === "secondMobility") {
-      departureCode = multiAddress2?.dongCode || "";
-    } else if (selectedType === "intersectedMobility") {
-      // 교집합일 때도 첫 번째 목적지를 기준으로 출발 코드 설정
-      departureCode = multiAddress1?.dongCode || "";
-    }
-
-    const arrivalCode = dong.departureDong.adminDongCode;
-
-    navigate(
-      `/multi/detail-dong?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
-    );
+  const handleDong = (data: Recommendation) => () => {
+    setMobilityOption(moblilityOption);
+    setSelectedRecommendation(data);
+    navigate("/multi-dong");
+    console.log("선택된 추천 동:", data);
+    console.log("선택된 추천 동 코드:", { moblilityOption });
   };
-
   // 선택된 추천 리스트
   const selectedRecommendations: Recommendation[] =
-    selectedType === "firstMobility"
+    moblilityOption === "firstMobility"
       ? firstMobility
-      : selectedType === "secondMobility"
+      : moblilityOption === "secondMobility"
       ? secondMobility
-      : intersectedMobility; // 교차일 때도 동일한 UI로 처리
-  //로딩
+      : intersectedMobility;
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  // 행정동 경계 데이터를 가져오는 함수
-  // 행정동 경계 데이터를 가져오는 함수
+
   const fetchBoundaries = async (dongCodes: string[]) => {
     const allData: Record<string, any> = {};
 
@@ -76,9 +64,8 @@ const MultiFindMap = () => {
     const dongCodes = selectedRecommendations.map(
       (dong) => dong.departureDong.adminDongCode
     );
-    console.log(`[${selectedType}]에서 가져온 동 코드 목록:`, dongCodes);
     fetchBoundaries(dongCodes);
-  }, [selectedType, firstMobility, secondMobility, intersectedMobility]);
+  }, [moblilityOption, firstMobility, secondMobility, intersectedMobility]);
   return (
     <div>
       <Header />
@@ -105,31 +92,31 @@ const MultiFindMap = () => {
           <div className="mt-4 space-x-2">
             <button
               className={`px-3 py-1 rounded ${
-                selectedType === "firstMobility"
+                moblilityOption === "firstMobility"
                   ? "bg-[#3356CC] text-white"
                   : "bg-gray-200"
               }`}
-              onClick={() => setSelectedType("firstMobility")}
+              onClick={() => setMobilityOption("firstMobility")}
             >
               출근지1
             </button>
             <button
               className={`px-3 py-1 rounded ${
-                selectedType === "secondMobility"
+                moblilityOption === "secondMobility"
                   ? "bg-[#3356CC] text-white"
                   : "bg-gray-200"
               }`}
-              onClick={() => setSelectedType("secondMobility")}
+              onClick={() => setMobilityOption("secondMobility")}
             >
               출근지2
             </button>
             <button
               className={`px-3 py-1 rounded ${
-                selectedType === "intersectedMobility"
+                moblilityOption === "intersectedMobility"
                   ? "bg-[#3356CC] text-white"
                   : "bg-gray-200"
               }`}
-              onClick={() => setSelectedType("intersectedMobility")}
+              onClick={() => setMobilityOption("intersectedMobility")}
             >
               겹치는 곳
             </button>

@@ -27,6 +27,11 @@ type Destination = {
   dongCode: string;
 };
 
+//mobility 옵션
+export type MobilityOption =
+  | "firstMobility"
+  | "secondMobility"
+  | "intersectedMobility";
 type InputType = "option1" | "option2";
 
 interface SearchState {
@@ -35,7 +40,8 @@ interface SearchState {
 
   singleDestination: Destination;
   setSingleDestination: (d: Destination) => void;
-  // MultiDestinations을 각각 개별적으로 관리
+
+  // MultiDestinations을 각각 개별적으로 관리 (refactor 할 떄, 배열로 관리해보는 것도 좋을듯)
   multiAddress1: Destination;
   setMultiAddress1: (d: Destination) => void;
 
@@ -44,7 +50,7 @@ interface SearchState {
 
   recommendations: Recommendation[];
   setRecommendations: (data: Recommendation[]) => void;
-  boundaryData: any; // 실제 타입이 있다면 any 대신 사용
+  boundaryData: any;
   setBoundaryData: (data: any) => void;
 
   selectedRecommendation: Recommendation | null;
@@ -55,6 +61,8 @@ interface SearchState {
   setSecondMobility: (data: Recommendation[]) => void;
   intersectedMobility: Recommendation[];
   setIntersectedMobility: (data: Recommendation[]) => void;
+  moblilityOption: MobilityOption;
+  setMobilityOption: (option: MobilityOption) => void;
   setMobilityData: (data: {
     firstMobility: Recommendation[];
     secondMobility: Recommendation[];
@@ -87,5 +95,7 @@ export const useSearchStore = create<SearchState>((set) => ({
   setSecondMobility: (data) => set({ secondMobility: data }),
   intersectedMobility: [],
   setIntersectedMobility: (data) => set({ intersectedMobility: data }),
+  moblilityOption: "firstMobility",
+  setMobilityOption: (option) => set({ moblilityOption: option }),
   setMobilityData: (data) => set(data),
 }));

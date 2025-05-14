@@ -1,11 +1,10 @@
 import React from "react";
-import { useSearchStore } from "../store/SearchStore";
 import axios from "axios";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import Mobility from "../components/Mobility";
 import DongDetailMap from "../components/DongDetailMap";
+import { useSearchStore } from "../store/SearchStore";
 type RentPrice = {
   buildingType: string;
   avgJeonseDeposit: number;
@@ -33,33 +32,45 @@ type DongDetailData = {
   location: DongLocation[];
 };
 const FindDong = () => {
-  const { selectedRecommendation, multiAddress1, multiAddress2 } =
-    useSearchStore();
+  const {
+    selectedRecommendation,
+    moblilityOption,
+    multiAddress1,
+    multiAddress2,
+    firstMobility,
+    secondMobility,
+  } = useSearchStore();
+
   const [dongDetail, setDongDetail] = useState<DongDetailData | null>(null);
 
   const [location, setLocation] = useState<DongLocation[]>([]);
+  const arrivalCode = selectedRecommendation?.departureDong.adminDongCode;
 
-  // URL 쿼리 파라미터를 읽어옴
-  const [searchParams] = useSearchParams();
-  const arrivalCode = searchParams.get("arrivalCode");
-  const departureCode = searchParams.get("departureCode");
+  const departureCode =
+    moblilityOption == "secondMobility"
+      ? multiAddress2.dongCode
+      : multiAddress1.dongCode;
+
   useEffect(() => {
-    const fetchDongDetail = async () => {
-      if (arrivalCode && departureCode) {
-        try {
-          const res = await axios.get(
-            `https://padong.site/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
-          );
-          const data = res.data?.data;
-          setDongDetail(data ?? null);
-          setLocation(data?.location ?? []);
-        } catch (e) {
-          console.error("추천 요청 실패:", e);
-        }
+    const fetchDongDetail = async (
+      arrivalCode: string,
+      departureCode: string
+    ) => {
+      try {
+        const res = await axios.get(
+          `https://padong.site/dongne/detail?arrivalCode=${arrivalCode}&departureCode=${departureCode}`
+        );
+        const data = res.data?.data;
+        console.log("도착지 상세 정보:", data);
+        setDongDetail(data ?? null);
+        setLocation(data?.location ?? []);
+      } catch (e) {
+        console.error("추천 요청 실패:", e);
       }
     };
-
-    fetchDongDetail();
+    if (arrivalCode && departureCode) {
+      fetchDongDetail(arrivalCode, departureCode);
+    }
   }, [arrivalCode, departureCode]);
   if (!dongDetail) return <div>로딩 중...</div>;
 

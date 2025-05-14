@@ -18,7 +18,7 @@ function App() {
         <Route path="/search" element={<FindMap />} />
         <Route path="/detail-dong" element={<FindDong />} />
         <Route path="/search-multi" element={<MultiFindMap />} />
-        <Route path="/multi/detail-dong" element={<MultiFindDong />} />
+        <Route path="/multi-dong" element={<MultiFindDong />} />
       </Routes>
     </Router>
   );

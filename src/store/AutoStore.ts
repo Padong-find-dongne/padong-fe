@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import debounce from "lodash/debounce";
+import axios from "axios";
 
 type AutoStore = {
   query: string;
@@ -17,25 +18,19 @@ export const useAutoStore = create<AutoStore>((set) => {
     }
 
     try {
-      const res = await fetch(
+      const res = await axios.get(
         `https://padong.site/open-search/keyword?keyword=${encodeURIComponent(
           q
         )}`,
         {
-          method: "GET",
           headers: {
-            Accept: "application/json", // 서버에 JSON 응답을 요청
+            Accept: "application/json",
           },
         }
       );
 
-      if (!res.ok) {
-        throw new Error(`API 요청 실패: ${res.statusText}`);
-      }
+      const data = res.data;
 
-      const data = await res.json();
-
-      // 응답 데이터 로그 출력
       console.log("서버 응답 데이터:", data);
 
       if (Array.isArray(data)) {

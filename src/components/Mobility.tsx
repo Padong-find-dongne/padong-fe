@@ -117,11 +117,11 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
             </div>
             {/*루트 상세 정보*/}
             <div className="relative pt-7 flex items-center justify-between">
-              <div className="flex flex-col items-center z-10 ">
+              <div className="flex flex-col items-center z-10 gap-2 ">
                 <img src="/images/bus.png" alt="버스" className="w-15 h-15" />
                 <div className="text-[#585858]">{busTime}분</div>
               </div>
-              <div className="flex items-center flex-col z-10">
+              <div className="flex items-center gap-2 flex-col z-10">
                 <img
                   src="/images/walk-icon.png"
                   alt="지하철"
@@ -134,7 +134,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
                   분
                 </div>
               </div>
-              <div className="flex flex-col items-center  z-10 ">
+              <div className="flex flex-col items-center gap-2 z-10 ">
                 <img
                   src="/images/arrive.png"
                   alt="목적지"
@@ -150,7 +150,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
             <div className="p-10 bg-gray-100 rounded-xl text-sm mt-5">
               {/*도보 정보*/}
               <div className="relative flex items-center justify-between ">
-                <div className="flex flex-col items-center z-10">
+                <div className="flex gap-2 flex-col items-center z-10">
                   <img
                     src="/images/car.png"
                     alt="자동차"
@@ -160,7 +160,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
                     {(route?.totalDistance / 500).toFixed(1)}분
                   </div>
                 </div>
-                <div className="flex items-center flex-col z-10">
+                <div className="flex gap-2 items-center flex-col z-10">
                   <img
                     src="/images/arrive.png"
                     alt="목적지"
@@ -176,8 +176,8 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
             <p className="text-lg font-semibold text-[#585858]">• 도보</p>
             <div className="p-10 bg-gray-100 rounded-xl text-sm mt-5">
               {/*도보 정보*/}
-              <div className="relative flex items-center justify-between ">
-                <div className="flex flex-col items-center z-10">
+              <div className="relative flex  items-center justify-between ">
+                <div className="flex gap-2 flex-col items-center z-10">
                   <img
                     src="/images/walk-icon.png"
                     alt="도보"
@@ -187,7 +187,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
                     {(route?.totalDistance / 83.33).toFixed(1)}분
                   </div>
                 </div>
-                <div className="flex items-center flex-col z-10">
+                <div className="flex gap-2 items-center flex-col z-10">
                   <img
                     src="/images/arrive.png"
                     alt="목적지"

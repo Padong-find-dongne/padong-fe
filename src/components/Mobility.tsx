@@ -24,6 +24,16 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
   const [route, setRoute] = useState<Itinerary | null>(null);
   const appKey = import.meta.env.VITE_TMAP_APP_KEY;
   [];
+  //'동'만 필터링
+  const filterDongNames = (arrivalName: string): string[] => {
+    // 공백으로 분리 후 trim 처리
+    const names = arrivalName.split(" ").map((name) => name.trim());
+
+    // '동'으로 끝나는 것만 필터링
+    return names.filter((name) => name.endsWith("동"));
+  };
+
+  const filteredNames = filterDongNames(arrivalName);
 
   const getRoute = async () => {
     if (!start || !end) {
@@ -140,7 +150,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
                   alt="목적지"
                   className="w-15 h-15"
                 />
-                <div className="text-[#585858]">{arrivalName}</div>
+                <div className="text-[#585858]">{filteredNames}</div>
               </div>
               <hr className="absolute top-1/2 left-0 right-0 h-px bg z-0 text-[#DADADA]" />
             </div>
@@ -166,7 +176,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
                     alt="목적지"
                     className="w-15 h-15"
                   />
-                  <div className="text-[#585858]">{arrivalName}</div>
+                  <div className="text-[#585858]">{filteredNames}</div>
                 </div>
                 <hr className="absolute top-1/2 left-0 right-0 h-px bg z-0 text-[#DADADA]" />
               </div>
@@ -176,7 +186,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
             <p className="text-lg font-semibold text-[#585858]">• 도보</p>
             <div className="p-10 bg-gray-100 rounded-xl text-sm mt-5">
               {/*도보 정보*/}
-              <div className="relative flex  items-center justify-between ">
+              <div className="relative flex justify-between ">
                 <div className="flex gap-2 flex-col items-center z-10">
                   <img
                     src="/images/walk-icon.png"
@@ -193,7 +203,7 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
                     alt="목적지"
                     className="w-15 h-15"
                   />
-                  <div className="text-[#585858]">{arrivalName}</div>
+                  <div className="text-[#585858]">{filteredNames}</div>
                 </div>
                 <hr className="absolute top-1/2 left-0 right-0 h-px bg z-0 text-[#DADADA]" />
               </div>

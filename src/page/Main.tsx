@@ -5,12 +5,14 @@ import NewsCard from "../components/NewsCard";
 import { useNavigate } from "react-router-dom";
 import { useNewsStore } from "../store/newsStore";
 import "../styles/Media.css";
+import gsap from "gsap";
 import { BiSolidQuoteLeft } from "react-icons/bi";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const Main: React.FC = () => {
   const { youthHousingNews, housingPriceNews, fetchAllNews } = useNewsStore();
   const navigate = useNavigate();
+  const newsEffect = gsap.timeline();
   // 페이지 이동
   const handleGuideClick = () => {
     navigate("/guide");
@@ -19,7 +21,6 @@ const Main: React.FC = () => {
     navigate("/news-list");
   };
   const [isLoading, setIsLoading] = React.useState(true);
-  //뉴스 렌더링
 
   // 뉴스 렌더링
   useEffect(() => {
@@ -33,7 +34,7 @@ const Main: React.FC = () => {
   return (
     <div className="mb-20">
       <Header />
-      <div className="flex items-center justify-center bg-[url(/images/banner1.png)] bg-center bg-cover Banner">
+      <div className="flex items-center justify-center bg-[url(/images/banner1.png)] bg-center bg-cover h-[55vh]">
         <div className="main-search-place">
           <div className="space-y-2 flex flex-col align-center justify-center py-12 banner-text">
             <BiSolidQuoteLeft className="text-2xl opacity-25" />
@@ -69,18 +70,20 @@ const Main: React.FC = () => {
             더보기
           </span>
         </div>
-        {isLoading ? (
-          <LoadingSpinner loadingMent="뉴스를 불러오는 중입니다" />
-        ) : (
-          <div className="news-grid mt-10 grid grid-cols-4 gap-4 ">
-            {[
-              ...youthHousingNews.slice(0, 2),
-              ...housingPriceNews.slice(0, 2),
-            ].map((item) => (
-              <NewsCard key={item.originallink} {...item} />
-            ))}
-          </div>
-        )}
+        <div className="newslist">
+          {isLoading ? (
+            <LoadingSpinner loadingMent="뉴스를 불러오는 중입니다" />
+          ) : (
+            <div className="news-grid mt-10 grid grid-cols-4 gap-4 ">
+              {[
+                ...youthHousingNews.slice(0, 2),
+                ...housingPriceNews.slice(0, 2),
+              ].map((item) => (
+                <NewsCard key={item.originallink} {...item} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

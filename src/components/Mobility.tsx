@@ -28,8 +28,6 @@ const Mobility = ({ start, end, arrivalName }: MobilityProps) => {
   const filterDongNames = (arrivalName: string): string[] => {
     // 공백으로 분리 후 trim 처리
     const names = arrivalName.split(" ").map((name) => name.trim());
-
-    // '동'으로 끝나는 것만 필터링
     return names.filter((name) => name.endsWith("동"));
   };
 

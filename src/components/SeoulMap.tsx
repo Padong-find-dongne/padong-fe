@@ -33,6 +33,7 @@ const SeoulMap = () => {
           ([code, { points }]: [string, BoundaryData]) => (
             <Polygon
               key={code}
+              className="boundary-polygon"
               positions={points.map(([lng, lat]) => [lat, lng])} // Leaflet은 [lat, lng] 순서!
               pathOptions={{ color: "#4A6CDF", fillOpacity: 0.4 }}
             />

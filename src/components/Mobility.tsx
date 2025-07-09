@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSearchStore } from "../store/SearchStore";
 
 type Coord = {
   lat: number;

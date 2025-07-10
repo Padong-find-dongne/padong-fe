@@ -72,7 +72,10 @@ const Main: React.FC = () => {
         </div>
         <div className="newslist">
           {isLoading ? (
-            <LoadingSpinner loadingMent="뉴스를 불러오는 중입니다" />
+            <LoadingSpinner
+              loadingMent="뉴스를 불러오는 중입니다"
+              imageSrc="../public/images/news.png"
+            />
           ) : (
             <div className="news-grid mt-10 grid grid-cols-4 gap-4 ">
               {[

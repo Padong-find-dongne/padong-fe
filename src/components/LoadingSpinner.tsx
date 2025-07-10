@@ -1,79 +1,68 @@
-/** @jsxImportSource @emotion/react */
-import React from "react";
-import styled from "@emotion/styled";
-import { keyframes } from "@emotion/react";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
 
-// 회전 애니메이션
-const spin = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
-
-// 점점점 애니메이션
-const dots = keyframes`
-  0% { content: ""; }
-  33% { content: "."; }
-  66% { content: ".."; }
-  100% { content: "..."; }
-`;
-
-// 전체 화면 컨테이너
-const SpinnerWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
-  height: 100vh;
-`;
-
-// 스피너 외곽 (회전하는 원)
-const Spinner = styled.div`
-  width: 80px;
-  height: 80px;
-  border: 6px solid #e0e0e0;
-  border-top: 6px solid #2e58e4;
-  border-radius: 50%;
-  animation: ${spin} 1s linear infinite;
-  position: relative;
-  margin-bottom: 20px;
-`;
-
-//스피넷 안에 이미지
-const CenterImage = styled.img`
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
-
-// 로딩중
-const LoadingText = styled.div`
-  font-size: 1.2rem;
-  color: #555;
-
-  &::after {
-    display: inline-block;
-    margin-left: 4px;
-    animation: ${dots} 1.5s steps(3, end) infinite;
-    content: "";
-  }
-`;
-
-interface LoadingSpinnerProps {
+interface LoadingScreenProps {
   loadingMent: string;
+  imageSrc: string;
+  fullScreen?: boolean;
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ loadingMent }) => {
+const LoadingScreen: React.FC<LoadingScreenProps> = ({
+  loadingMent,
+  imageSrc,
+  fullScreen = false,
+}) => {
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current) {
+      // 좌우 흔들리는 애니메이션
+      gsap.to(imgRef.current, {
+        rotateY: 70,
+        duration: 1,
+        yoyo: true,
+        repeat: -1,
+        ease: "power1.inOut",
+      });
+    }
+  }, []);
+
   return (
-    <SpinnerWrapper>
-      <Spinner>
-        <CenterImage src="/images/padong-icon.png" alt="Logo" />
-      </Spinner>
-      <LoadingText>{loadingMent}</LoadingText>
-    </SpinnerWrapper>
+    <div
+      style={{
+        position: fullScreen ? "fixed" : "relative",
+        top: fullScreen ? 0 : undefined,
+        left: fullScreen ? 0 : undefined,
+        width: fullScreen ? "100vw" : "auto",
+        height: fullScreen ? "100vh" : "auto",
+        backgroundColor: fullScreen ? "rgba(255,255,255,0.9)" : "transparent",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: fullScreen ? 9999 : "auto",
+      }}
+    >
+      <img
+        ref={imgRef}
+        src={imageSrc}
+        alt="로딩 이미지"
+        style={{
+          width: fullScreen ? "500px" : "200px",
+          height: fullScreen ? "300px" : "150px",
+        }}
+      />
+      <p
+        style={{
+          marginTop: "2rem",
+          fontSize: "1rem",
+          color: "#818181",
+        }}
+      >
+        {loadingMent}
+      </p>
+    </div>
   );
 };
 
-export default LoadingSpinner;
+export default LoadingScreen;

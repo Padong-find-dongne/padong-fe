@@ -246,7 +246,11 @@ const SearchBar = () => {
 
       <div className="absolute w-100 flex flex-col items-center mt-5">
         {isLoading && (
-          <LoadingSpinner loadingMent="추천 행정동을 검색하고 있어요" />
+          <LoadingSpinner
+            loadingMent="추천 행정동을 검색하고 있어요"
+            imageSrc="../public/images/loading.png"
+            fullScreen={true}
+          />
         )}
       </div>
     </div>

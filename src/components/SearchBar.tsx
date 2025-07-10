@@ -162,7 +162,8 @@ const SearchBar = () => {
       const code =
         singleDestination.dongCode ||
         (await fetchAdminDongCode(inputType, dongName));
-      if (!code) return alert("행정동 리스트에서 선택해주세요");
+      if (!code) setIsLoading(false);
+      return alert("행정동 리스트에서 선택해주세요");
 
       const recommendations = await fetchRecommendations(dongName);
       setRecommendations(recommendations); // zustand store에 저장

@@ -49,7 +49,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         alt="로딩 이미지"
         style={{
           width: fullScreen ? "500px" : "200px",
-          height: fullScreen ? "180px" : "100px",
+          height: fullScreen ? "300px" : "100px",
         }}
       />
       <p

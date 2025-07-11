@@ -6,6 +6,7 @@ import axios from "axios";
 import { useMultiAutoStore } from "../store/MultiAutoStore";
 import React, { useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
+import mapIcon from "../../public/images/loading.png";
 const SearchBar = () => {
   const {
     inputType,
@@ -162,8 +163,10 @@ const SearchBar = () => {
       const code =
         singleDestination.dongCode ||
         (await fetchAdminDongCode(inputType, dongName));
-      if (!code) setIsLoading(false);
-      return alert("행정동 리스트에서 선택해주세요");
+      if (!code) {
+        setIsLoading(false);
+        return alert("행정동 리스트에서 선택해주세요");
+      }
 
       const recommendations = await fetchRecommendations(dongName);
       setRecommendations(recommendations); // zustand store에 저장
@@ -291,7 +294,7 @@ const SearchBar = () => {
         {isLoading && (
           <LoadingSpinner
             loadingMent="추천 행정동을 검색하고 있어요"
-            imageSrc="../public/images/loading.png"
+            imageSrc={mapIcon}
             fullScreen={true}
           />
         )}

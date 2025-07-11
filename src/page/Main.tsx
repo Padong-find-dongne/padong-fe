@@ -8,7 +8,7 @@ import "../styles/Media.css";
 import gsap from "gsap";
 import { BiSolidQuoteLeft } from "react-icons/bi";
 import LoadingSpinner from "../components/LoadingSpinner";
-
+import newsIcon from "../../public/images/news.png";
 const Main: React.FC = () => {
   const { youthHousingNews, housingPriceNews, fetchAllNews } = useNewsStore();
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const Main: React.FC = () => {
           {isLoading ? (
             <LoadingSpinner
               loadingMent="뉴스를 불러오는 중입니다"
-              imageSrc="../public/images/news.png"
+              imageSrc={newsIcon}
             />
           ) : (
             <div className="news-grid mt-10 grid grid-cols-4 gap-4 ">

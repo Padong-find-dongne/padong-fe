@@ -4,7 +4,7 @@ import { GrSearch } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useMultiAutoStore } from "../store/MultiAutoStore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import mapIcon from "../../public/images/loading.png";
 const SearchBar = () => {
@@ -158,6 +158,8 @@ const SearchBar = () => {
   };
   const handleNext = async () => {
     setIsLoading(true);
+
+    //입력값이 한개인 경우
     if (inputType === "option1") {
       const dongName = singleDestination.dongName;
       const code =
@@ -170,9 +172,14 @@ const SearchBar = () => {
 
       const recommendations = await fetchRecommendations(dongName);
       setRecommendations(recommendations); // zustand store에 저장
-
-      navigate("/search");
-    } else {
+      //로딩 1.5초간 유지
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/search");
+      }, 2000);
+    }
+    //입력값이 두개인 경우
+    else {
       const [addr1, addr2] = multiDestinations.map((d) => d.dongName);
       const codes = await fetchAdminDongCode(inputType, addr1, addr2);
       if (!codes) return alert("행정동 리스트에서 선택해주세요");
@@ -191,8 +198,11 @@ const SearchBar = () => {
       console.log(recommendations.firstMobility);
       console.log(recommendations.secondMobility);
       setIntersectedMobility(recommendations.intersectedMobility);
-
-      navigate("/search-multi");
+      //로딩 1.5초간 유지
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/search-multi");
+      }, 2000);
     }
   };
 
